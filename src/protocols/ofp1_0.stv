@@ -19,8 +19,76 @@ def Hello : type = record {
   data : vector(nat(8));
 }
 
-def Error : type = record {
+ErrorType : type = enum(nat(16,msbf)) {
+  HELLO_FAILED    : HelloFailedCode;
+  BAD_REQUEST     : BadRequestCode;
+  BAD_ACTION      : BadActionCode;
+  FLOW_MOD_FAILED : FlowModFailedCode;
+  PORT_MOD_FAILED : PortModFailedCode;
+  QUEUE_OP_FAILED : QueueOpFailedCode;
+}
 
+HelloFailedCode : type = enum(nat(16,msbf)) {
+  INCOMPATIBLE = 0,
+  EPERM        = 1  
+}
+
+BadRequestCode : type = enum(nat(16,msbf)) {
+  BAD_VERSION    = 0,
+  BAD_TYPE       = 1,
+  BAD_STAT       = 2,
+  BAD_VENDOR     = 3,
+  BAD_SUB_TYPE   = 4,
+  EPERM          = 5,
+  BAD_LENGTH     = 6,
+  BUFFER_EMPTY   = 7,
+  BUFFER_UNKNOWN = 8
+}
+
+BadActionCode : type = enum(nat(16,msbf)) {
+  BAD_TYPE        = 0,
+  BAD_LENGTH      = 1,
+  BAD_VENDOR      = 2,
+  BAD_VENDOR_TYPE = 3,
+  BAD_OUT_PORT    = 4,
+  BAD_ARGUMENT    = 5,
+  EPERM           = 6,
+  TOO_MANY        = 7,
+  BAD_QUEUE       = 8
+}
+
+FlowModFailedCode : type = enum(nat(16,msbf)) {
+  ALL_TABLES_FULL   = 0,
+  OVERLAP           = 1,
+  EPERM             = 2,
+  BAD_EMERG_TIMEOUT = 3,
+  BAD_COMMAND       = 4,
+  UNSUPPORTED       = 5
+}
+
+PortModFailedCode : type = enum(nat(16,msbf)) {
+  BAD_PORT    = 0,
+  BAD_HW_ADDR = 1
+}
+
+QueueOpFailedCode : type = enum(nat(16,msbf)) {
+  BAD_PORT  = 0,
+  BAD_QUEUE = 1,
+  EPERM     = 2
+}
+
+def ErrorCode(t:ErrorType):type = variant {
+  HelloFailedCode   if t == HELLO_FAILED;
+  BadRequestCode    if t == BAD_REQUEST;
+  BadActionCode     if t == BAD_ACTION;
+  FlowModFailedCode if t == FLOW_MOD_FAILED;
+  PortModFailedCode if t == PORT_MOD_FAILED;
+  QueueOpFailedCode if t == QUEUE_OP_FAILED;
+}
+
+def Error : type = record {
+  type : ErrorType;
+  code : ErrorCode;
 }
 
 def EchoReq : type = record {
@@ -111,7 +179,7 @@ def PacketIn : type = record {
   data      : vector(nat(8));
 }
 
-def MatchWildcards : type = enum(nat(32), msbf) {
+def MatchWildcards : type = enum(nat(32,msbf)) {
   0..4194303,
   IN_PORT     = 1, 
   DL_VLAN     = 2, 
@@ -128,7 +196,7 @@ def MatchWildcards : type = enum(nat(32), msbf) {
   ALL         = 4194303
 }
 
-def MatchInPort : type = enum(nat(16), msbf) {
+def MatchInPort : type = enum(nat(16, msbf)) {
   0..65279
 }
 
@@ -184,7 +252,7 @@ def PortStatus : type = record {
 
 def Action : type = record {}
 
-def PortID : type = enum(nat(16), msbf) {
+def PortID : type = enum(nat(16,msbf)) {
   0..65280
 }
 
@@ -196,7 +264,7 @@ def PacketOut : type = record {
   data        : vector(nat(8));
 }
 
-def FlowModCommand : type = enum(nat(16), msbf) {
+def FlowModCommand : type = enum(nat(16,msbf)) {
   ADD           = 0,
   MODIFY        = 1,
   MODIFY_STRICT = 2,
@@ -204,7 +272,7 @@ def FlowModCommand : type = enum(nat(16), msbf) {
   DELETE_STRICT = 4,
 }
 
-def FlowModFlags : type = enum(nat(16), msbf) {
+def FlowModFlags : type = enum(nat(16,msbf)) {
   SEND_FLOW_REM	= 0,
   CHECK_OVERLAP = 1,
   EMERG         = 2,
@@ -223,7 +291,7 @@ def FlowMod : type = record {
   actions      : vector(Action);	
 }
 
-def PortModConfig : type = enum(nat(32), msbf) {	
+def PortModConfig : type = enum(nat(32,msbf)) {	
   PORT_DOWN	  = 1,
   NO_STP      = 2,
   NO_RECV     = 4,
@@ -233,7 +301,7 @@ def PortModConfig : type = enum(nat(32), msbf) {
   NO_PACKETIN = 64
 }
 
-def PortModMask : type = enum(nat(32), msbf) {
+def PortModMask : type = enum(nat(32,msbf)) {
   0..127,
   PORT_DOWN	  = 1,
   NO_STP      = 2,
@@ -244,7 +312,7 @@ def PortModMask : type = enum(nat(32), msbf) {
   NO_PACKETIN = 64
 }
 
-def PortModAdvertise : type = enum(nat(32), msbf) {
+def PortModAdvertise : type = enum(nat(32,msbf)) {
   0..4095,
   10MB_HD    = 1,
   10MB_FD    = 2,
