@@ -50,7 +50,7 @@ def FeatureCapabilities : type = enum(nat(32,msbf)) {
 }
 
 def FeatureActions : type = enum(nat(32,msbf)) {
-  OUTPUT 	   = 1,
+  OUTPUT       = 1,
   SET_VLAN_VID = 2,
   SET_VLAN_PCP = 4,
   STRIP_VLAN   = 8,
@@ -61,7 +61,7 @@ def FeatureActions : type = enum(nat(32,msbf)) {
   SET_NW_TOS   = 256,
   SET_TP_SRC   = 512,
   SET_TP_DST   = 1024,
-  ENQUEUE	   = 2048
+  ENQUEUE      = 2048
 }
 
 def Port : type = record {}
@@ -69,11 +69,11 @@ def Port : type = record {}
 def FeatureRes : type = record {
   datapath-id  : nat(64,msbf);
   n_buffers    : nat(32,msbf);
-  n_tables 	   : nat(8);
-			   : nat(24);
+  n_tables     : nat(8);
+               : nat(24);
   capabilities : FeatureCapabilities;
-  actions 	   : FeatureActions;
-  ports 	   : vector(Port);
+  actions      : FeatureActions;
+  ports        : vector(Port);
 }
 
 def GetConfigReq : type = record {}
@@ -105,8 +105,8 @@ def PacketIn : type = record {
   total_len : nat(16,msbf);
   in_port   : nat(16,msbf);
   reason    : PacketInReason;
-			: nat(8);
-  data 		: vector(nat(8));
+            : nat(8);
+  data      : vector(nat(8));
 }
 
 def Match : type = record {}
@@ -114,19 +114,19 @@ def Match : type = record {}
 def FlowRemovedReason : type = enum(nat(8)) {
   IDLE_TIMEOUT = 0,
   HARD_TIMEOUT = 1,
-  DELETE 	   = 2
+  DELETE       = 2
 }
 
 def FlowRemoved : type = record {
-  match 		: Match;
-  cookie 		: nat(64,msbf); 
+  match         : Match;
+  cookie        : nat(64,msbf); 
   reason    	: FlowRemovedReason;
-				: pad(8);
-  priority 		: nat(16,msbf);
+                : pad(8);
+  priority      : nat(16,msbf);
   duration_sec  : nat(32,msbf); 
   duration_nsec : nat(32,msbf);   
   idle_timeout  : nat(16,msbf);
-				: pad(16);
+                : pad(16);
   packet_count  : nat(64,msbf); 
   byte_count    : nat(64,msbf); 
 }
@@ -139,7 +139,7 @@ def PortStatusReason : type = enum(nat(8)) {
 
 def PortStatus : type = record {
   reason : PortStatusReason;
-		 : pad(56);  
+         : pad(56);  
   port   : Port		 
 }
 
@@ -153,35 +153,35 @@ def PacketOut : type = record {
   buffer_id   : nat(32,msbf);
   in_port     : PortID;
   actions_len : nat(16,msbf);
-  actions	  : vector(Action);
-  data 		  : vector(nat(8));
+  actions     : vector(Action);
+  data        : vector(nat(8));
 }
 
 def FlowModCommand : type = enum(nat(16), msbf) {
-  ADD 	 		= 0,
-  MODIFY 		= 1,
+  ADD           = 0,
+  MODIFY        = 1,
   MODIFY_STRICT = 2,
-  DELETE 	  	= 3,
+  DELETE        = 3,
   DELETE_STRICT = 4,
 }
 
 def FlowModFlags : type = enum(nat(16), msbf) {
   SEND_FLOW_REM	= 0,
   CHECK_OVERLAP = 1,
-  EMERG 		= 2,
+  EMERG         = 2,
 }
 
 def FlowMod : type = record {
-  match 	   : Match;
-  cookie 	   : nat(64,msbf); 
+  match        : Match;
+  cookie       : nat(64,msbf); 
   command      : FlowModCommand;
   idle_timeout : nat(16,msbf);
   hard_timeout : nat(16,msbf);
-  priority 	   : nat(16,msbf); 
+  priority     : nat(16,msbf); 
   buffer_id    : nat(32,msbf);
-  out_port 	   : nat(16,msbf);
-  flags 	   : FlowModFlags;
-  actions	   : vector(Action);	
+  out_port     : nat(16,msbf);
+  flags        : FlowModFlags;
+  actions      : vector(Action);	
 }
 
 def PortMod : type = record {}
@@ -194,14 +194,14 @@ def BarrierRes : type = record {}
 
 def QueueGetConfigReq : type = record {
   port : PortID;
-	   : nat(16);
+       : nat(16);
 }
 
 def Queue : type = record {}
 
 def QueueGetConfigRes : type = record {
   port   : PortID;
-	     : nat(48);
+         : nat(48);
   queues : vector(Queue);	   
 }
 
