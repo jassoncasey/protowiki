@@ -12,5 +12,11 @@ Environment Setup
 1. virtualenv env
 2. source env/bin/activate
 3. pip install django
-
 - deactive ... to leave environment
+
+Running
+--------
+
+1. python manage.py syncdb
+2. python manage.py runserver 8000
+
