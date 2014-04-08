@@ -44,7 +44,7 @@ def FeatureCapabilities : type = enum(nat(32,msbf)) {
   PORT_STATS   = 4,
   STP          = 8,
   RESERVED     = 16,
-  IP_REASM 	   = 32,
+  IP_REASM     = 32,
   QUEUE_STATS  = 64,
   ARP_MATCH_IP = 128
 }
@@ -131,18 +131,79 @@ def FlowRemoved : type = record {
   byte_count    : nat(64,msbf); 
 }
 
-def PortStatus : type = record {}
-def PacketOut : type = record {}
-def FlowMod : type = record {}
+def PortStatusReason : type = enum(nat(8)) {
+  ADD 	 = 0,
+  DELETE = 1,
+  MODIFY = 2
+}
+
+def PortStatus : type = record {
+  reason : PortStatusReason;
+		 : pad(56);  
+  port   : Port		 
+}
+
+def Action : type = record {}
+
+def PortID : type = enum(nat(16), msbf) {
+  0..65280
+}
+
+def PacketOut : type = record {
+  buffer_id   : nat(32,msbf);
+  in_port     : PortID;
+  actions_len : nat(16,msbf);
+  actions	  : vector(Action);
+  data 		  : vector(nat(8));
+}
+
+def FlowModCommand : type = enum(nat(16), msbf) {
+  ADD 	 		= 0,
+  MODIFY 		= 1,
+  MODIFY_STRICT = 2,
+  DELETE 	  	= 3,
+  DELETE_STRICT = 4,
+}
+
+def FlowModFlags : type = enum(nat(16), msbf) {
+  SEND_FLOW_REM	= 0,
+  CHECK_OVERLAP = 1,
+  EMERG 		= 2,
+}
+
+def FlowMod : type = record {
+  match 	   : Match;
+  cookie 	   : nat(64,msbf); 
+  command      : FlowModCommand;
+  idle_timeout : nat(16,msbf);
+  hard_timeout : nat(16,msbf);
+  priority 	   : nat(16,msbf); 
+  buffer_id    : nat(32,msbf);
+  out_port 	   : nat(16,msbf);
+  flags 	   : FlowModFlags;
+  actions	   : vector(Action);	
+}
+
 def PortMod : type = record {}
+
 def StatsReq : type = record {}
 def StatsRes : type = record {}
 
 def BarrierReq : type = record {}
 def BarrierRes : type = record {}
 
-def QueueGetConfigReq : type = record {}
-def QueueGetConfigRes : type = record {}
+def QueueGetConfigReq : type = record {
+  port : PortID;
+	   : nat(16);
+}
+
+def Queue : type = record {}
+
+def QueueGetConfigRes : type = record {
+  port   : PortID;
+	     : nat(48);
+  queues : vector(Queue);	   
+}
 
 def Payload(t:Type):type = variant {
   Hello             if t == HELLO;
