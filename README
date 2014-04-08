@@ -1,0 +1,16 @@
+
+Dependencies
+------------
+
+- Python 2.7
+- Pip
+- Virtualenv
+
+Environment Setup
+-----------------
+
+1. virtualenv env
+2. source env/bin/activate
+3. pip install django
+
+- deactive ... to leave environment
