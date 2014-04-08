@@ -475,7 +475,32 @@ def QueueGetConfigReq : type = record {
        : nat(16);
 }
 
-def Queue : type = record {}
+def Property : type = enum(nat(16,msbf)) {	
+  MIN_RATE = 1
+}
+
+def QueuePropertyMinRate : type = record {
+  rate : nat(16,msbf);
+       : nat(48,msbf);
+}
+
+def QueueProperyPayload(t:Property):type = variant {
+  QueuePropertyMinRate if t == MIN_RATE;
+}
+
+def QueueProperty : type = record {
+  property : 
+  length   : nat(16,msbf);
+           : nat(32,msbf);
+  payload  : QueueProperyPayload;
+}
+
+def Queue : type = record {
+  queue_id   : nat(32,msbf);
+  length     : nat(16,msbf);
+             : nat(16,msbf);
+  properties : vector(QueueProperty);		   
+}
 
 def QueueGetConfigRes : type = record {
   port   : PortID;
@@ -506,7 +531,6 @@ def Payload(t:Type):type = variant {
   BarrierRes        if t == BARRIER_RES;
   QueueGetConfigReq if t == QUEUE_GET_CONFIG_REQ;
   QueueGetConfigRes if t == QUEUE_GET_CONFIG_RES;
-
 }
 
 } // v1_0 namspace
