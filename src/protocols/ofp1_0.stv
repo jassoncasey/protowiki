@@ -131,8 +131,32 @@ def FlowRemoved : type = record {
   byte_count    : nat(64,msbf); 
 }
 
-def PortStatus : type = record {}
-def PacketOut : type = record {}
+def PortStatusReason : type = enum(nat(8)) {
+  ADD 	 = 0,
+  DELETE = 1,
+  MODIFY = 2
+}
+
+def PortStatus : type = record {
+  reason : PortStatusReason;
+		 : pad(56);  
+  port   : Port		 
+}
+
+def Action : type = record {}
+
+def PortID : type = enum(nat(16), msbf) {
+  0..65280
+}
+
+def PacketOut : type = record {
+  buffer_id   : nat(32,msbf);
+  in_port     : PortID;
+  actions_len : nat(16,msbf);
+  actions	  : vector(Action);
+  data 		  : vector(nat(8));
+}
+
 def FlowMod : type = record {}
 def PortMod : type = record {}
 def StatsReq : type = record {}
