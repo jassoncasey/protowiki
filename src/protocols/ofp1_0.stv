@@ -39,6 +39,7 @@ def Vendor : type = record {
 def FeatureReq : type = record {}
 
 def FeatureCapabilities : type = enum(nat(32,msbf)) {
+  0..255,
   FLOW_STATS   = 1,
   TABLE_STATS  = 2,
   PORT_STATS   = 4,
@@ -50,6 +51,7 @@ def FeatureCapabilities : type = enum(nat(32,msbf)) {
 }
 
 def FeatureActions : type = enum(nat(32,msbf)) {
+  0..4095,
   OUTPUT       = 1,
   SET_VLAN_VID = 2,
   SET_VLAN_PCP = 4,
@@ -109,7 +111,44 @@ def PacketIn : type = record {
   data      : vector(nat(8));
 }
 
-def Match : type = record {}
+def MatchWildcards : type = enum(nat(32), msbf) {
+  0..4194303,
+  IN_PORT     = 1, 
+  DL_VLAN     = 2, 
+  DL_SRC      = 4,
+  DL_DST      = 8,
+  DL_TYPE     = 16,
+  NW_PROT     = 32,
+  TP_SRC      = 64,
+  TP_DST      = 128,
+  NW_SRC      = 0 | 2^(40 - subnet_length),
+  NW_DST      = 0 | 2^(46 - subnet_length),
+  DL_VLAN_PCP = 1048576,
+  NW_TOS      = 2097152,
+  ALL         = 4194303
+}
+
+def MatchInPort : type = enum(nat(16), msbf) {
+  0..65279
+}
+
+def Match : type = record {
+  wildcards : MatchWildcards;
+  in_port   : MatchInPort;
+  dl_src    : nat(48,msbf); 
+  dl_dst    : nat(48,msbf);  
+  dl_vlan   : nat(16,msbf);  
+  dl_pcp    : nat(16,msbf);  
+            : nat(8);
+  dl_type   : nat(16,msbf); 
+  nw_tos    : nat(8);
+  nw_proto  : nat(8);  
+            : nat(16);
+  nw_src    : nat(32,msbf); 
+  nw_dst    : nat(32,msbf); 
+  tp_src    : nat(16,msbf); 
+  tp_dst    : nat(16,msbf); 
+}
 
 def FlowRemovedReason : type = enum(nat(8)) {
   IDLE_TIMEOUT = 0,
@@ -184,7 +223,7 @@ def FlowMod : type = record {
   actions      : vector(Action);	
 }
 
-def PortModConfig : type = enum(nat(32), msbf) {
+def PortModConfig : type = enum(nat(32), msbf) {	
   PORT_DOWN	  = 1,
   NO_STP      = 2,
   NO_RECV     = 4,
@@ -195,11 +234,30 @@ def PortModConfig : type = enum(nat(32), msbf) {
 }
 
 def PortModMask : type = enum(nat(32), msbf) {
-  0..127
+  0..127,
+  PORT_DOWN	  = 1,
+  NO_STP      = 2,
+  NO_RECV     = 4,
+  NO_RECV_STP = 8,
+  NO_FLOOD    = 16,
+  NO_FWD      = 32,
+  NO_PACKETIN = 64
 }
 
 def PortModAdvertise : type = enum(nat(32), msbf) {
-  0..4095
+  0..4095,
+  10MB_HD    = 1,
+  10MB_FD    = 2,
+  100MD_HD   = 4,
+  100MD_FD   = 8,
+  1GB_HD     = 16,
+  1GB_FD     = 32,
+  10GB_FD    = 64,
+  COPPER     = 128,
+  FIBER      = 256,
+  AUTO_NEG   = 512,
+  PAUSE      = 1024,
+  PAUSE_ASYM = 2048
 }
 
 def PortMod : type = record {
