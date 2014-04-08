@@ -1,0 +1,103 @@
+def ofp : namespace {
+
+def Version : type = enum(nat(8)) {
+  OFP_1_0 = 1
+}
+
+def v1_0 : namespace {
+
+def Type : type = enum(nat(8)) {
+  HELLO = 0, ERROR = 1, ECHO_REQ = 2, ECHO_RES = 3, VENDOR = 4,
+  FEATURE_REQ = 5, FEATURE_RES = 6, GET_CONFIG_REQ = 7, GET_CONFIG_RES = 8,
+  SET_CONFIG = 9, PACKET_IN = 10, FLOW_REMOVED = 11, PORT_STATUS = 12,
+  PACKET_OUT = 13, FLOW_MOD = 14, PORT_MOD = 15,
+  STATS_REQ = 16, STATS_RES = 17, BARRIER_REQ = 18, BARRIER_RES = 19,
+  QUEUE_GET_CONFIG_REQ = 20, QUEUE_GET_CONFIG_RES = 21
+}
+
+def Hello : type = record {
+  data : vector(nat(8));
+}
+
+def Error : type = record {
+
+}
+
+def EchoReq : type = record {
+  data : vector(nat(8));
+}
+
+def EchoRes : type = record {
+  data : vector(nat(8));
+}
+
+def Vendor : type = record {
+  id : nat(32,msbf);
+  data : vector(nat(8));
+}
+
+def FeatureReq : type = record {}
+def FeatureRes : type = record {}
+
+def GetConfigReq : type = record {}
+
+def ConfigFlags : type = enum(nat(16,msbf)) {
+  FRAG_NORMAL = 0,
+  FRAG_DROP   = 1,
+  FRAG_REASM  = 2,
+  FRAG_MASK   = 3
+}
+
+def GetConfigRes : type = record {
+  flags         : ConfigFlags;
+  miss_send_len : nat(16,msbf);
+}
+
+def SetConfig : type = record {
+  flags         : ConfigFlags;
+  miss_send_len : nat(16,msbf);
+}
+
+def PacketIn : type = record {}
+def FlowRemoved : type = record {}
+def PortStatus : type = record {}
+def PacketOut : type = record {}
+def FlowMod : type = record {}
+def PortMod : type = record {}
+def StatsReq : type = record {}
+def StatsRes : type = record {}
+
+def BarrierReq : type = record {}
+def BarrierRes : type = record {}
+
+def QueueGetConfigReq : type = record {}
+def QueueGetConfigRes : type = record {}
+
+def Payload(t:Type):type = variant {
+  Hello             if t == HELLO;
+  Error             if t == ERROR;
+  EchoReq           if t == ECHO_REQ;
+  EchoRes           if t == ECHO_RES;
+  Vendor            if t == VENDOR;
+  FeatureReq        if t == FEATURE_REQ;
+  FeatureRes        if t == FEATURE_RES;
+  GetConfigReq      if t == GET_CONFIG_REQ;
+  GetConfigRes      if t == GET_CONFIG_RES;
+  SetConfig         if t == SET_CONFIG;
+  PacketIn          if t == PACKET_IN;
+  FlowRemoved       if t == FLOW_REMOVED;
+  PortStatus        if t == PORT_STATUS;
+  PacketOut         if t == PACKET_OUT;
+  FlowMod           if t == FLOW_MOD;
+  PortMod           if t == PORT_MOD;
+  StatsReq          if t == STATS_REQ;
+  StatsRes          if t == STATS_RES;
+  BarrierReq        if t == BARRIER_REQ;
+  BarrierRes        if t == BARRIER_RES;
+  QueueGetConfigReq if t == QUEUE_GET_CONFIG_REQ;
+  QueueGetConfigRes if t == QUEUE_GET_CONFIG_RES;
+
+}
+
+} // v1_0 namspace
+} // ofp namespace 
