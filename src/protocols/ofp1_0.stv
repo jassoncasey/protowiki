@@ -44,7 +44,7 @@ def FeatureCapabilities : type = enum(nat(32,msbf)) {
   PORT_STATS   = 4,
   STP          = 8,
   RESERVED     = 16,
-  IP_REASM 	   = 32,
+  IP_REASM     = 32,
   QUEUE_STATS  = 64,
   ARP_MATCH_IP = 128
 }
