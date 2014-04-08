@@ -1,21 +1,20 @@
 <script type="text/javascript">
 
-var w = 300;
-var h = 300;
+var jq_view = $("#prime_view");
+var width = jq_view.width();
+var height = 800;
 
-var svg = d3.select("body")
-  .append("svg")
-  .attr("width", w)
-  .attr("height", h);
+var view = d3.select("#prime_view");
+var svg = view.append("svg")
+  .attr("width", width)
+  .attr("height", height);
 
 d3.json("flare.json", function(root) {
 
   var force = d3.layout.force()
     .nodes(root.nodes)
-    .links(root.edges)
-    .linkDistance([50])
-    .charge([-200])
-    .size([w, h])
+    .charge([-2000])
+    .size([width,height])
     .start();
 
   var edges = svg.selectAll("line")
@@ -29,7 +28,7 @@ d3.json("flare.json", function(root) {
     .data(root.nodes)
     .enter()
     .append("circle")
-    .attr("r", 10)
+    .attr("r", 30)
     .style("fill", function(d, i) {
       return "#ffaa00"; //colors(i);
     })
@@ -45,5 +44,5 @@ d3.json("flare.json", function(root) {
   });
 
 });
-  
+
 </script>
