@@ -37,7 +37,43 @@ def Vendor : type = record {
 }
 
 def FeatureReq : type = record {}
-def FeatureRes : type = record {}
+
+def FeatureCapabilities : type = enum(nat(32,msbf)) {
+  FLOW_STATS   = 1,
+  TABLE_STATS  = 2,
+  PORT_STATS   = 4,
+  STP          = 8,
+  RESERVED     = 16,
+  IP_REASM 	   = 32,
+  QUEUE_STATS  = 64,
+  ARP_MATCH_IP = 128
+}
+
+def FeatureActions : type = enum(nat(32,msbf)) {
+  OUTPUT 	   = 1,
+  SET_VLAN_VID = 2,
+  SET_VLAN_PCP = 4,
+  STRIP_VLAN   = 8,
+  SET_DL_SRC   = 16,
+  SET_DL_DST   = 32,
+  SET_NW_SRC   = 64,
+  SET_NW_DST   = 128,
+  SET_NW_TOS   = 256,
+  SET_TP_SRC   = 512,
+  SET_TP_DST   = 1024,
+  ENQUEUE	   = 2048
+}
+
+def Port : type = record {}
+
+def FeatureRes : type = record {
+  datapath-id : nat(64,msbf);
+  n_buffers : nat(32,msbf);
+  n_tables : nat(8);
+  capabilities : FeatureCapabilities;
+  actions : FeatureActions;
+  ports : vector(Port);
+}
 
 def GetConfigReq : type = record {}
 
