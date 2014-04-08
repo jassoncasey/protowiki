@@ -157,53 +157,16 @@ def PacketOut : type = record {
   data 		  : vector(nat(8));
 }
 
-def FlowModCommand : type = enum(nat(16), msbf) {
-  ADD 	 		= 0,
-  MODIFY 		= 1,
-  MODIFY_STRICT = 2,
-  DELETE 	  	= 3,
-  DELETE_STRICT = 4,
-}
-
-def FlowModFlags : type = enum(nat(16), msbf) {
-  SEND_FLOW_REM	= 0,
-  CHECK_OVERLAP = 1,
-  EMERG 		= 2,
-}
-
-def FlowMod : type = record {
-  match 	   : Match;
-  cookie 	   : nat(64,msbf); 
-  command      : FlowModCommand;
-  idle_timeout : nat(16,msbf);
-  hard_timeout : nat(16,msbf);
-  priority 	   : nat(16,msbf); 
-  buffer_id    : nat(32,msbf);
-  out_port 	   : nat(16,msbf);
-  flags 	   : FlowModFlags;
-  actions	   : vector(Action);	
-}
-
+def FlowMod : type = record {}
 def PortMod : type = record {}
-
 def StatsReq : type = record {}
 def StatsRes : type = record {}
 
 def BarrierReq : type = record {}
 def BarrierRes : type = record {}
 
-def QueueGetConfigReq : type = record {
-  port : PortID;
-	   : nat(16);
-}
-
-def Queue : type = record {}
-
-def QueueGetConfigRes : type = record {
-  port   : PortID;
-	     : nat(48);
-  queues : vector(Queue);	   
-}
+def QueueGetConfigReq : type = record {}
+def QueueGetConfigRes : type = record {}
 
 def Payload(t:Type):type = variant {
   Hello             if t == HELLO;
