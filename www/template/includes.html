@@ -15,10 +15,10 @@
   </head>
   <body>
    
-    {% block body %}Body{% endblock %}
-
     <script src="{% static "js/jquery.min.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script src="{% static "js/d3.v3.min.js" %}"></script>
+    
+    {% block body %}Body{% endblock %}
   </body>
 </html>
