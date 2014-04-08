@@ -308,7 +308,103 @@ def PortStatus : type = record {
   port   : Port		 
 }
 
-def Action : type = record {}
+def ActionType : type = enum(nat(16,msbf)) {
+  OUTPUT       = 0,
+  SET_VLAN_VID = 1,
+  SET_VLAN_PCP = 2,
+  STRIP_VLAN   = 3,
+  SET_DL_SRC   = 4,
+  SET_DL_DST   = 5,
+  SET_NW_SRC   = 6,
+  SET_NW_DST   = 7,
+  SET_NW_TOS   = 8,
+  SET_TP_SRC   = 9,
+  SET_TP_DST   = 10,
+  ENQUEUE      = 11,
+  VENDOR       = 65535
+}
+
+def ActionOutput : type = record {
+  port    : Port_id;
+  max_len : nat(16,msbf);
+}
+
+def ActionSetVlanVid : type = record {
+  vlan_vid : nat(16,msbf);
+           : nat(16,msbf);
+}
+
+def ActionSetVlanPcp : type = record {
+  vlan_pcp : nat(16,msbf);
+           : nat(16,msbf);
+}
+
+def ActionStripVlan : type = record {}
+
+def ActionSetDlSrc : type = record {
+  set_dl_src : nat(48,msbf);
+             : nat(48,msbf);
+}
+
+def ActionSetDlDst : type = record {
+  set_dl_dst : nat(48,msbf);
+             : nat(48,msbf);
+}
+
+def ActionSetNwSrc : type = record {
+  set_nw_src : nat(32,msbf);
+}
+
+def ActionSetNwDst : type = record {
+  set_nw_dst : nat(32,msbf);
+}
+
+def ActionSetNwTos : type = record {
+  set_nw_tos : nat(8);
+             : nat(24,msbf);
+}
+
+def ActionSetTpSrc : type = record {
+  set_dl_src : nat(16,msbf);
+             : nat(16,msbf);
+}
+
+def ActionSetTpDst : type = record {
+  set_dl_dst : nat(16,msbf);
+             : nat(16,msbf);
+}
+
+def ActionEnqueue : type = record {
+  port     : Port_id;
+           : nat(48,msbf);
+  queue_id : nat(32,msbf);
+}
+
+def ActionVendor : type = record {
+  vendor : nat(32,msbf);
+}
+
+def ActionPayload(t:ActionType):type = variant {
+  ActionOutput     if t == OUTPUT;
+  ActionSetVlanVid if t == SET_VLAN_VID;
+  ActionSetVlanPcp if t == SET_VLAN_PCP;
+  ActionStripVlan  if t == STRIP_VLAN;
+  ActionSetDlSrc   if t == SET_DL_SRC;
+  ActionSetDlDst   if t == SET_DL_DST;
+  ActionSetNwSrc   if t == SET_NW_SRC;
+  ActionSetNwDst   if t == SET_NW_DST;
+  ActionSetNwTos   if t == SET_NW_TOS;
+  ActionSetTpSrc   if t == SET_TP_SRC;
+  ActionSetTpDst   if t == SET_TP_DST;
+  ActionEnqueue    if t == ENQUEUE;
+  ActionVendor     if t == VENDOR;
+}
+
+def Action : type = record {
+  type    : ActionType;
+  length  : nat(16,msbf);
+  payload : ActionPayload;
+}
 
 def PortID : type = enum(nat(16,msbf)) {
   0..65280
