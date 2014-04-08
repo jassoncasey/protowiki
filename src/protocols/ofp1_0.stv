@@ -134,7 +134,65 @@ def FeatureActions : type = enum(nat(32,msbf)) {
   ENQUEUE      = 2048
 }
 
-def Port : type = record {}
+def Port_Id : type = enum(nat(16,msbf)) {
+  0..65279
+  MAX        = 65280,
+  IN_PORT    = 65528,
+  TABLE      = 65529,
+  NORMAL     = 65530,
+  FLOOD      = 65531,
+  ALL        = 65532,
+  CONTROLLER = 65533,
+  LOCAL      = 65534,
+  NONE       = 65535
+}
+
+def PortConfig : type = enum(nat(32,msbf)) {
+  0..127,
+  PORT_DOWN	  = 1,
+  NO_STP      = 2,
+  NO_RECV     = 4,
+  NO_RECV_STP = 8,
+  NO_FLOOD    = 16,
+  NO_FWD      = 32,
+  NO_PACKETIN = 64
+}
+
+def PortState : type = enum(nat(32,msbf)) {
+  0..31,
+  STP_LISTEN  = 0,
+  LINK_DOWN   = 1,
+  STP_LEARN   = 2,
+  STP_FORWARD = 4,
+  STP_BLOCK   = 8,
+  STP_MASK    = 16
+}
+
+def PortFeature : type = enum(nat(32,msbf)) {
+  0..4095,
+  10MB_HD    = 1,
+  10MB_FD    = 2,
+  100MD_HD   = 4,
+  100MD_FD   = 8,
+  1GB_HD     = 16,
+  1GB_FD     = 32,
+  10GB_FD    = 64,
+  COPPER     = 128,
+  FIBER      = 256,
+  AUTO_NEG   = 512,
+  PAUSE      = 1024,
+  PAUSE_ASYM = 2048
+}
+
+def Port : type = record {
+  port_id    : Port_id;
+  hw_addr    : nat(48,msbf);
+  name       : nat(128,msbf);
+  config     : PortConfig;
+  state      : PortState;
+  curr       : PortFeature;
+  advertised : PortFeature;
+}
 
 def FeatureRes : type = record {
   datapath-id  : nat(64,msbf);
@@ -301,39 +359,12 @@ def PortModConfig : type = enum(nat(32,msbf)) {
   NO_PACKETIN = 64
 }
 
-def PortModMask : type = enum(nat(32,msbf)) {
-  0..127,
-  PORT_DOWN	  = 1,
-  NO_STP      = 2,
-  NO_RECV     = 4,
-  NO_RECV_STP = 8,
-  NO_FLOOD    = 16,
-  NO_FWD      = 32,
-  NO_PACKETIN = 64
-}
-
-def PortModAdvertise : type = enum(nat(32,msbf)) {
-  0..4095,
-  10MB_HD    = 1,
-  10MB_FD    = 2,
-  100MD_HD   = 4,
-  100MD_FD   = 8,
-  1GB_HD     = 16,
-  1GB_FD     = 32,
-  10GB_FD    = 64,
-  COPPER     = 128,
-  FIBER      = 256,
-  AUTO_NEG   = 512,
-  PAUSE      = 1024,
-  PAUSE_ASYM = 2048
-}
-
 def PortMod : type = record {
   port      : nat(16,msbf);
   hw_addr   : nat(48,msbf);
   config    : PortModConfig;
-  mask      : PortModMask;
-  advertise : PortModAdvertise;
+  mask      : PortConfig;
+  advertise : PortFeature;
             : nat(32);
 }
 
