@@ -184,7 +184,32 @@ def FlowMod : type = record {
   actions      : vector(Action);	
 }
 
-def PortMod : type = record {}
+def PortModConfig : type = enum(nat(32), msbf) {
+  PORT_DOWN	  = 1,
+  NO_STP      = 2,
+  NO_RECV     = 4,
+  NO_RECV_STP = 8,
+  NO_FLOOD    = 16,
+  NO_FWD      = 32,
+  NO_PACKETIN = 64
+}
+
+def PortModMask : type = enum(nat(32), msbf) {
+  0..127
+}
+
+def PortModAdvertise : type = enum(nat(32), msbf) {
+  0..4095
+}
+
+def PortMod : type = record {
+  port      : nat(16,msbf);
+  hw_addr   : nat(48,msbf);
+  config    : PortModConfig;
+  mask      : PortModMask;
+  advertise : PortModAdvertise;
+            : nat(32);
+}
 
 def StatsReq : type = record {}
 def StatsRes : type = record {}
