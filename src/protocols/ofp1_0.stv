@@ -67,12 +67,13 @@ def FeatureActions : type = enum(nat(32,msbf)) {
 def Port : type = record {}
 
 def FeatureRes : type = record {
-  datapath-id : nat(64,msbf);
-  n_buffers : nat(32,msbf);
-  n_tables : nat(8);
+  datapath-id  : nat(64,msbf);
+  n_buffers    : nat(32,msbf);
+  n_tables 	   : nat(8);
+			   : nat(24);
   capabilities : FeatureCapabilities;
-  actions : FeatureActions;
-  ports : vector(Port);
+  actions 	   : FeatureActions;
+  ports 	   : vector(Port);
 }
 
 def GetConfigReq : type = record {}
@@ -94,8 +95,42 @@ def SetConfig : type = record {
   miss_send_len : nat(16,msbf);
 }
 
-def PacketIn : type = record {}
-def FlowRemoved : type = record {}
+def PacketInReason : type = enum(nat(8)) {
+  NO_MACTH = 0,
+  ACTION   = 1
+}
+
+def PacketIn : type = record {
+  buffer_id : nat(32,msbf);
+  total_len : nat(16,msbf);
+  in_port   : nat(16,msbf);
+  reason    : PacketInReason;
+			: nat(8);
+  data 		: vector(nat(8));
+}
+
+def Match : type = record {}
+
+def FlowRemovedReason : type = enum(nat(8)) {
+  IDLE_TIMEOUT = 0,
+  HARD_TIMEOUT = 1,
+  DELETE 	   = 2
+}
+
+def FlowRemoved : type = record {
+  match 		: Match;
+  cookie 		: nat(64,msbf); 
+  reason    	: FlowRemovedReason;
+				: pad(8);
+  priority 		: nat(16,msbf);
+  duration_sec  : nat(32,msbf); 
+  duration_nsec : nat(32,msbf);   
+  idle_timeout  : nat(16,msbf);
+				: pad(16);
+  packet_count  : nat(64,msbf); 
+  byte_count    : nat(64,msbf); 
+}
+
 def PortStatus : type = record {}
 def PacketOut : type = record {}
 def FlowMod : type = record {}
