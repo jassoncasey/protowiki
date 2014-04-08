@@ -50,6 +50,14 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'www.urls'
 
+STATICFILES_DIRS = (
+  os.path.join(BASE_DIR, 'static'),
+)
+
+TEMPLATE_DIRS = (
+  os.path.join(BASE_DIR, 'template'),
+)
+
 WSGI_APPLICATION = 'www.wsgi.application'
 
 
