@@ -4,18 +4,18 @@
 <!DOCTYPE hmtl>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <title>{% block title %}Include Template{% endblock %}</title>
+    <title>{% block title %}Base Template{% endblock %}</title>
 
-    <link rel="icon" href="{% static "img/favicon.ico" %}">
-    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <link rel="short icon" href="{% static "img/favicon.ico" %}"/>
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet"/>
   </head>
   <body>
    
-    {% block body %}<h1>Include Body</h1>{% endblock %}
+    {% block body %}Body{% endblock %}
 
     <script src="{% static "js/jquery.min.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
