@@ -33,6 +33,22 @@ d3.json("flare.json", function(root) {
       return "#ffaa00"; //colors(i);
     })
     .call(force.drag);
+  
+  var text = svg.selectAll("text")
+    .data(root.nodes)
+    .enter()
+    .append("text")
+    .text(function(d) {
+      return d.name;
+    })
+    .attr("x", function(d) {
+      return d.x;
+    })
+    .attr("y", function(d) {
+      return d.y;
+    })
+    .call(force.drag);
+
 
   force.on("tick", function() {
     edges.attr("x1", function(d) { return d.source.x; })
@@ -41,6 +57,8 @@ d3.json("flare.json", function(root) {
       .attr("y2", function(d) { return d.target.y; });
     nodes.attr("cx", function(d) { return d.x; } )
       .attr("cy", function(d) { return d.y; } );
+    text.attr("x", function(d) { return d.x; })
+      .attr("y", function(d) { return d.y; });
   });
 
 });
