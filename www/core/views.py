@@ -43,4 +43,4 @@ def flare(request):
       ],
   }
 
-  return HttpResponse(json.dumps(result))
+  return HttpResponse(json.dumps(json_protocols()))

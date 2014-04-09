@@ -10,7 +10,7 @@ class Protocol(models.Model):
     return self.name
 
 def json_protocols():
-  return [{ "name" : p.name } for p in Protocol.objects.all()]
+  return { "nodes" : [{ "name" : p.name } for p in Protocol.objects.all()] }
 
 class Relation(models.Model):
   protocol = models.ForeignKey(Protocol, related_name="carries")
