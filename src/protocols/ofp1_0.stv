@@ -404,6 +404,8 @@ def Action : type = record {
   type    : ActionType;
   length  : nat(16,msbf);
   payload : ActionPayload;
+  
+  restrict(length - 4, payload);
 }
 
 def PortID : type = enum(nat(16,msbf)) {
@@ -416,6 +418,8 @@ def PacketOut : type = record {
   actions_len : nat(16,msbf);
   actions     : vector(Action);
   data        : vector(nat(8));
+  
+  restrict(actions_len, data);
 }
 
 def FlowModCommand : type = enum(nat(16,msbf)) {
@@ -464,8 +468,171 @@ def PortMod : type = record {
             : nat(32);
 }
 
-def StatsReq : type = record {}
-def StatsRes : type = record {}
+def StatsType : type = enum(nat(16,msbf)) {	
+  DESC      = 0,
+  FLOW      = 1,
+  AGGREGATE = 2,
+  TABLE     = 3,
+  PORT      = 4,
+  QUEUE     = 5,
+  VENDOR    = 6
+}
+
+def StatsReqDesc : type = record {}
+
+def StatsReqFlow : type = record {
+  match    : Match;
+  table_id : nat(8);
+           : nat(8);
+  out_port : PortID;
+}
+
+def StatsReqAggregate : type = record {
+  match    : Match;
+  table_id : nat(8);
+           : nat(8);
+  out_port : PortID;
+}
+
+def StatsReqPort : type = record {
+  port_no : PortID;
+          : nat(48);
+}
+
+def StatsReqTable : type = record {}
+
+def StatsReqQueue : type = record {
+  port_no  : PortID;
+           : nat(16);
+  queue_id : nat(32,msbf);	  
+}
+
+def StatsReqVendor : type = record {
+  vendor_id : nat(32,msbf);
+  data      : vector(nat(8));
+}
+
+def StatsReqPayload(t:StatsType):type = variant {
+  StatsReqDesc      if t == DESC;
+  StatsReqFlow      if t == FLOW;
+  StatsReqAggregate if t == AGGREGATE;
+  StatsReqPort      if t == PORT;
+  StatsReqTable     if t == TABLE;
+  StatsReqQueue     if t == QUEUE;
+  StatsReqVendor    if t == VENDOR;
+}
+  
+def StatsReq : type = record {
+  type    : StatsType;
+  flags   : nat(16,msbf);
+  payload : StatsReqPayload;
+}
+
+def StatsResDesc : type = record {
+  mfr_desc   : nat(2048,msbf);
+  hw_desc    : nat(2048,msbf);
+  sw_desc    : nat(2048,msbf);
+  serial_num : nat(256,msbf);
+  dp_desc    : nat(2048,msbf);
+}
+
+def StatsResFlow : type = record {
+  length        : nat(16,msbf);
+  table_id      : nat(8);
+                : nat(8);
+  match         : Match;
+  duration_sec  : nat(32,msbf); 	
+  duration_nsec : nat(32,msbf);
+  priority      : nat(16,msbf);
+  idle_timeout  : nat(16,msbf); 
+  hard_timeout  : nat(16,msbf);  
+                : nat(48);
+  cookie        : nat(64,msbf);  
+  packet_count  : nat(64,msbf); 
+  byte_count    : nat(64,msbf); 
+  actions       : vector(Action);
+}
+
+def StatsResFlows : type = record {
+  flows : vector(StatsResFlow);
+}
+
+def StatsResAggregate : type = record {
+  packet_count : nat(64,msbf); 
+  byte_count   : nat(64,msbf); 
+  flow_count   : nat(32,msbf); 
+               : nat(32);
+}
+
+def StatsResPort : type = record {
+  port_no      : PortID;
+               : nat(48);
+  rx_packets   : nat(64,msbf); 
+  tx_packets   : nat(64,msbf);   
+  rx_bytes     : nat(64,msbf); 
+  tx_bytes     : nat(64,msbf); 
+  rx_dropped   : nat(64,msbf); 
+  tx_dropped   : nat(64,msbf);
+  rx_errors    : nat(64,msbf); 
+  tx_errors    : nat(64,msbf);   
+  rx_frame_err : nat(64,msbf);  
+  rx_over_err  : nat(64,msbf);  
+  rx_crc_err   : nat(64,msbf);  
+  collisions   : nat(64,msbf);  
+}
+
+def StatsResPorts : type = record {
+  ports : vector(StatsResPort);
+}
+
+def StatsReqTable : type = record {
+  table_id      : nat(8);
+                : nat(24);
+  name          : nat(128,msbf); 
+  wildcards     : nat(32,msbf);
+  max_entries   : nat(32,msbf);
+  active_count  : nat(32,msbf);
+  lookup_count  : nat(64,msbf);
+  matched_count : nat(64,msbf);  
+}
+
+def StatsReqTables : type = record {
+  tables : vector(StatsResTable);
+}
+
+def StatsResQueue : type = record {
+  length     : nat(16,msbf);
+             : nat(16);
+  queue_id   : nat(32,msbf);	
+  tx_bytes   : nat(64,msbf); 
+  tx_packets : nat(64,msbf); 
+  tx_errors  : nat(64,msbf);   
+}
+
+def StatsResQueues : type = record {
+  queues : vector(StatsResQueue);
+}
+
+def StatsResVendor : type = record {
+  vendor_id : nat(32,msbf);
+  data      : vector(nat(8));
+}
+
+def StatsResPayload(t:StatsType):type = variant {
+  StatsResDesc      if t == DESC;
+  StatsResFlows     if t == FLOW;
+  StatsResAggregate if t == AGGREGATE;
+  StatsResPorts     if t == PORT;
+  StatsResTables    if t == TABLE;
+  StatsResQueues    if t == QUEUE;
+  StatsResVendor    if t == VENDOR;
+}
+
+def StatsRes : type = record {
+  type    : StatsType;
+  flags   : nat(16,msbf);
+  payload : StatsResPayload;
+}
 
 def BarrierReq : type = record {}
 def BarrierRes : type = record {}
@@ -489,17 +656,21 @@ def QueueProperyPayload(t:Property):type = variant {
 }
 
 def QueueProperty : type = record {
-  property : 
+  property : Property;
   length   : nat(16,msbf);
            : nat(32,msbf);
   payload  : QueueProperyPayload;
+  
+  restrict(length - 8, payload);
 }
 
 def Queue : type = record {
   queue_id   : nat(32,msbf);
   length     : nat(16,msbf);
              : nat(16,msbf);
-  properties : vector(QueueProperty);		   
+  properties : vector(QueueProperty);
+
+  restrict(length - 8, properties);  
 }
 
 def QueueGetConfigRes : type = record {
@@ -531,6 +702,16 @@ def Payload(t:Type):type = variant {
   BarrierRes        if t == BARRIER_RES;
   QueueGetConfigReq if t == QUEUE_GET_CONFIG_REQ;
   QueueGetConfigRes if t == QUEUE_GET_CONFIG_RES;
+}
+
+def Message : type = record {
+  version : Version;
+  type    : Type;
+  length  : nat(16,msbf);
+  xid     : nat(32,msbf);
+  payload : Payload;
+
+  restrict(length - 8, payload); 
 }
 
 } // v1_0 namspace
