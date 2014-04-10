@@ -19,7 +19,136 @@ def Hello : type = record {
   data : vector(nat(8));
 }
 
+ErrorType : type = enum(nat(16,msbf)) {
+  HELLO_FAILED         = 0,
+  BAD_REQUEST          = 1,
+  BAD_ACTION           = 2,
+  BAD_INSTRUCTION      = 3,
+  BAD_MATCH            = 4,
+  FLOW_MOD_FAILED      = 5,
+  GROUP_MOD_FAILED     = 6,
+  PORT_MOD_FAILED      = 7,
+  TABLE_MOD_FAILED     = 8,
+  QUEUE_OP_FAILED      = 9,
+  SWITCH_CONFIG_FAILED = 10
+}
+
+HelloFailedCode : type = enum(nat(16,msbf)) {
+  INCOMPATIBLE = 0,
+  EPERM        = 1  
+}
+
+BadRequestCode : type = enum(nat(16,msbf)) {
+  BAD_VERSION      = 0,
+  BAD_TYPE         = 1,
+  BAD_STAT         = 2,
+  BAD_EXPERIMENTER = 3,
+  BAD_SUB_TYPE     = 4,
+  EPERM            = 5,
+  BAD_LENGTH       = 6,
+  BUFFER_EMPTY     = 7,
+  BUFFER_UNKNOWN   = 8,
+  BAD_TABLE_ID     = 9
+}
+
+BadActionCode : type = enum(nat(16,msbf)) {
+  BAD_TYPE              = 0,
+  BAD_LENGTH            = 1,
+  BAD_EXPERIMENTER      = 2,
+  BAD_EXPERIMENTER_TYPE = 3,
+  BAD_OUT_PORT          = 4,
+  BAD_ARGUMENT          = 5,
+  EPERM                 = 6,
+  TOO_MANY              = 7,
+  BAD_QUEUE             = 8,
+  BAD_OUT_GROUP         = 9,
+  MATCH_INCONSISTENT    = 10,
+  UNSUPPORTED_ORDER     = 11,
+  BAD_TAG               = 12
+}
+
+BadInstructionCode : type = enum(nat(16,msbf)) {
+  UNKNOWN_INST        = 0,
+  UNSUP_INST          = 1,
+  BAD_TABLE_ID        = 2,
+  UNSUP_METADATA      = 3,
+  UNSUP_METADATA_MASK = 4,
+  UNSUP_EXP_LIST      = 5
+}
+
+BadMatch : type = enum(nat(16,msbf)) {
+  BAD_TYPE         = 0,
+  BAD_LEN          = 1,
+  BAD_TAG          = 2,
+  BAD_DL_ADDR_MASK = 3,
+  BAD_HW_ADDR_MASK = 4,
+  BAD_WILDCARDS    = 5,
+  BAD_FIELD        = 6,
+  BAD_VALUE        = 7
+}
+
+FlowModFailedCode : type = enum(nat(16,msbf)) {
+  UNKNOWN      = 0,
+  TABLE_FULL   = 1,
+  BAD_TABLE_ID = 2,
+  OVERLAP      = 3,
+  EPERM        = 4,
+  BAD_TIMEOUT  = 5,
+  BAD_COMMAND  = 6
+}
+
+GroupModFailedCode : type = enum(nat(16,msbf)) {
+  GROUP_EXISTS         = 0,
+  INVALID_GROUP        = 1,
+  WEIGHT_UNSUPPORTED   = 2,
+  OUT_OF_GROUPS        = 3,
+  OUT_OF_BUCKETS       = 4,
+  CHAINING_UNSUPPORTED = 5,
+  WATCH_UNSUPPORTED    = 6,
+  LOOP                 = 7,
+  UNKNOWN_GROUP        = 8
+}
+
+PortModFailedCode : type = enum(nat(16,msbf)) {
+  BAD_PORT      = 0,
+  BAD_HW_ADDR   = 1,
+  BAD_CONFIG    = 2,
+  BAD_ADVERTISE = 3
+}
+
+TableModFailedCode : type = enum(nat(16,msbf)) {
+  BAD_TABLE  = 0,
+  BAD_CONFIG = 1
+}
+
+QueueOpFailedCode : type = enum(nat(16,msbf)) {
+  BAD_PORT  = 0,
+  BAD_QUEUE = 1,
+  EPERM     = 2
+}
+
+SwitchConfigFailedCode : type = enum(nat(16,msbf)) {
+  BAD_FLAGS = 0,
+  BAD_LEN   = 1
+}
+
+def ErrorCode(t:ErrorType):type = variant {
+  HelloFailedCode        if t == HELLO_FAILED;
+  BadRequestCode         if t == BAD_REQUEST;
+  BadActionCode          if t == BAD_ACTION;
+  BadInstructionCode     if t == BAD_INSTRUCTION;
+  BadMatch               if t == BAD_MATCH;     
+  FlowModFailedCode      if t == FLOW_MOD_FAILED;
+  GroupModFailedCode     if t == GROUP_MOD_FAILED;
+  PortModFailedCode      if t == PORT_MOD_FAILED;
+  TableModFailedCode     if t == TABLE_MOD_FAILED;
+  QueueOpFailedCode      if t == QUEUE_OP_FAILED;
+  SwitchConfigFailedCode if t == SWITCH_CONFIG_FAILED;
+}
+
 def Error : type = record {
+  type : ErrorType;
+  code : ErrorCode;
 }
 
 def EchoReq : type = record {

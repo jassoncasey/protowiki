@@ -20,12 +20,12 @@ def Hello : type = record {
 }
 
 ErrorType : type = enum(nat(16,msbf)) {
-  HELLO_FAILED    : HelloFailedCode;
-  BAD_REQUEST     : BadRequestCode;
-  BAD_ACTION      : BadActionCode;
-  FLOW_MOD_FAILED : FlowModFailedCode;
-  PORT_MOD_FAILED : PortModFailedCode;
-  QUEUE_OP_FAILED : QueueOpFailedCode;
+  HELLO_FAILED    = 0,
+  BAD_REQUEST     = 1,
+  BAD_ACTION      = 2,
+  FLOW_MOD_FAILED = 3,
+  PORT_MOD_FAILED = 4,
+  QUEUE_OP_FAILED = 5
 }
 
 HelloFailedCode : type = enum(nat(16,msbf)) {
