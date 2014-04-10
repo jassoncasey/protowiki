@@ -165,7 +165,29 @@ def Experimenter : type = record {
 }
 
 def FeatureReq : type = record {}
-def FeatureRes : type = record {}
+
+def FeatureCapabilities : type = enum(nat(32,msbf)) {
+  0..255,
+  FLOW_STATS   = 1,
+  TABLE_STATS  = 2,
+  PORT_STATS   = 4,
+  GROUP_STATS  = 8,
+  IP_REASM     = 32,
+  QUEUE_STATS  = 64,
+  ARP_MATCH_IP = 128
+}
+
+def Port : type = record {}
+
+def FeatureRes : type = record {
+  datapath-id  : nat(64,msbf);
+  n_buffers    : nat(32,msbf);
+  n_tables     : nat(8);
+               : nat(24);
+  capabilities : FeatureCapabilities;
+  reserved     : nat(32,msbf);
+  ports        : vector(Port);
+}
 
 def GetConfigReq : type = record {}
 
@@ -174,7 +196,6 @@ def ConfigFlags : type = enum(nat(16,msbf)) {
   FRAG_DROP   = 1,
   FRAG_REASM  = 1 << 1,
   FRAG_MASK   = 3,
-  INVALID_TTL_TO_CONTROLLER = 1 << 2
 }
 
 def GetConfigRes : type = record {
@@ -188,6 +209,8 @@ def SetConfig : type = record {
 }
 
 def PacketIn : type = record {}
+
+
 def FlowRemoved : type = record {}
 def PortStatus : type = record {}
 def PacketOut : type = record {}
