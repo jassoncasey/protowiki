@@ -264,7 +264,7 @@ def Match : type = record {
   dl_src    : nat(48,msbf); 
   dl_dst    : nat(48,msbf);  
   dl_vlan   : nat(16,msbf);  
-  dl_pcp    : nat(16,msbf);  
+  dl_pcp    : nat(8);  
             : nat(8);
   dl_type   : nat(16,msbf); 
   nw_tos    : nat(8);
@@ -286,12 +286,12 @@ def FlowRemoved : type = record {
   match         : Match;
   cookie        : nat(64,msbf); 
   reason    	: FlowRemovedReason;
-                : pad(8);
+                : nat(8);
   priority      : nat(16,msbf);
   duration_sec  : nat(32,msbf); 
   duration_nsec : nat(32,msbf);   
   idle_timeout  : nat(16,msbf);
-                : pad(16);
+                : nat(16);
   packet_count  : nat(64,msbf); 
   byte_count    : nat(64,msbf); 
 }
@@ -304,7 +304,7 @@ def PortStatusReason : type = enum(nat(8)) {
 
 def PortStatus : type = record {
   reason : PortStatusReason;
-         : pad(56);  
+         : nat(56);  
   port   : Port		 
 }
 
@@ -451,16 +451,13 @@ def FlowMod : type = record {
 
 def PortModConfig : type = enum(nat(32,msbf)) {	
   PORT_DOWN	  = 1,
-  NO_STP      = 2,
   NO_RECV     = 4,
-  NO_RECV_STP = 8,
-  NO_FLOOD    = 16,
   NO_FWD      = 32,
   NO_PACKETIN = 64
 }
 
 def PortMod : type = record {
-  port      : nat(16,msbf);
+  port      : PortID;
   hw_addr   : nat(48,msbf);
   config    : PortModConfig;
   mask      : PortConfig;
@@ -475,7 +472,7 @@ def StatsType : type = enum(nat(16,msbf)) {
   TABLE     = 3,
   PORT      = 4,
   QUEUE     = 5,
-  VENDOR    = 6
+  VENDOR    = 65535
 }
 
 def StatsReqDesc : type = record {}
@@ -484,25 +481,25 @@ def StatsReqFlow : type = record {
   match    : Match;
   table_id : nat(8);
            : nat(8);
-  out_port : PortID;
+  out_port : Port_Id;
 }
 
 def StatsReqAggregate : type = record {
   match    : Match;
   table_id : nat(8);
            : nat(8);
-  out_port : PortID;
-}
-
-def StatsReqPort : type = record {
-  port_no : PortID;
-          : nat(48);
+  out_port : Port_Id;
 }
 
 def StatsReqTable : type = record {}
 
+def StatsReqPort : type = record {
+  port_no : Port_Id;
+          : nat(48);
+}
+
 def StatsReqQueue : type = record {
-  port_no  : PortID;
+  port_no  : Port_Id;
            : nat(16);
   queue_id : nat(32,msbf);	  
 }
@@ -564,6 +561,21 @@ def StatsResAggregate : type = record {
                : nat(32);
 }
 
+def StatsResTable : type = record {
+  table_id      : nat(8);
+                : nat(24);
+  name          : nat(128,msbf); 
+  wildcards     : nat(32,msbf);
+  max_entries   : nat(32,msbf);
+  active_count  : nat(32,msbf);
+  lookup_count  : nat(64,msbf);
+  matched_count : nat(64,msbf);  
+}
+
+def StatsResTables : type = record {
+  tables : vector(StatsResTable);
+}
+
 def StatsResPort : type = record {
   port_no      : PortID;
                : nat(48);
@@ -583,21 +595,6 @@ def StatsResPort : type = record {
 
 def StatsResPorts : type = record {
   ports : vector(StatsResPort);
-}
-
-def StatsReqTable : type = record {
-  table_id      : nat(8);
-                : nat(24);
-  name          : nat(128,msbf); 
-  wildcards     : nat(32,msbf);
-  max_entries   : nat(32,msbf);
-  active_count  : nat(32,msbf);
-  lookup_count  : nat(64,msbf);
-  matched_count : nat(64,msbf);  
-}
-
-def StatsReqTables : type = record {
-  tables : vector(StatsResTable);
 }
 
 def StatsResQueue : type = record {
