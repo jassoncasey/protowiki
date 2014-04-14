@@ -89,6 +89,7 @@ def ErrorCode(t:ErrorType):type = variant {
 def Error : type = record {
   type : ErrorType;
   code : ErrorCode;
+  data : vector(nat(8));
 }
 
 def EchoReq : type = record {
@@ -326,29 +327,29 @@ def ActionType : type = enum(nat(16,msbf)) {
 
 def ActionOutput : type = record {
   port    : Port_id;
-  max_len : nat(16,msbf);
+  max_len : nat(16);
 }
 
 def ActionSetVlanVid : type = record {
   vlan_vid : nat(16,msbf);
-           : nat(16,msbf);
+           : nat(16);
 }
 
 def ActionSetVlanPcp : type = record {
   vlan_pcp : nat(16,msbf);
-           : nat(16,msbf);
+           : nat(16);
 }
 
 def ActionStripVlan : type = record {}
 
 def ActionSetDlSrc : type = record {
   set_dl_src : nat(48,msbf);
-             : nat(48,msbf);
+             : nat(48);
 }
 
 def ActionSetDlDst : type = record {
   set_dl_dst : nat(48,msbf);
-             : nat(48,msbf);
+             : nat(48);
 }
 
 def ActionSetNwSrc : type = record {
@@ -361,17 +362,17 @@ def ActionSetNwDst : type = record {
 
 def ActionSetNwTos : type = record {
   set_nw_tos : nat(8);
-             : nat(24,msbf);
+             : nat(24);
 }
 
 def ActionSetTpSrc : type = record {
   set_dl_src : nat(16,msbf);
-             : nat(16,msbf);
+             : nat(16);
 }
 
 def ActionSetTpDst : type = record {
   set_dl_dst : nat(16,msbf);
-             : nat(16,msbf);
+             : nat(16);
 }
 
 def ActionEnqueue : type = record {
@@ -433,7 +434,7 @@ def FlowModCommand : type = enum(nat(16,msbf)) {
 def FlowModFlags : type = enum(nat(16,msbf)) {
   SEND_FLOW_REM	= 0,
   CHECK_OVERLAP = 1,
-  EMERG         = 2,
+  EMERG         = 2
 }
 
 def FlowMod : type = record {

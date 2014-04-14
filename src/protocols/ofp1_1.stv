@@ -149,6 +149,7 @@ def ErrorCode(t:ErrorType):type = variant {
 def Error : type = record {
   type : ErrorType;
   code : ErrorCode;
+  data : vector(nat(8));
 }
 
 def EchoReq : type = record {
@@ -400,22 +401,22 @@ def ActionOutput : type = record {
 
 def ActionSetVlanVid : type = record {
   vlan_vid : nat(16,msbf);
-           : nat(16,msbf);
+           : nat(16);
 }
 
 def ActionSetVlanPcp : type = record {
   vlan_pcp : nat(16,msbf);
-           : nat(16,msbf);
+           : nat(16);
 }
 
 def ActionSetDlSrc : type = record {
   set_dl_src : nat(48,msbf);
-             : nat(48,msbf);
+             : nat(48);
 }
 
 def ActionSetDlDst : type = record {
   set_dl_dst : nat(48,msbf);
-             : nat(48,msbf);
+             : nat(48);
 }
 
 def ActionSetNwSrc : type = record {
@@ -428,22 +429,22 @@ def ActionSetNwDst : type = record {
 
 def ActionSetNwTos : type = record {
   set_nw_tos : nat(8);
-             : nat(24,msbf);
+             : nat(24);
 }
 
 def ActionSetNwTos : type = record {
   set_nw_ecn : nat(8);
-             : nat(24,msbf);
+             : nat(24);
 }
 
 def ActionSetTpSrc : type = record {
   set_dl_src : nat(16,msbf);
-             : nat(16,msbf);
+             : nat(16);
 }
 
 def ActionSetTpDst : type = record {
   set_dl_dst : nat(16,msbf);
-             : nat(16,msbf);
+             : nat(16);
 }
 
 def ActionCopyTtlOut : type = record {}
@@ -455,32 +456,32 @@ def ActionSetMplsLabel : type = record {
 
 def ActionSetMplsTc : type = record {
   mpls_tc : nat(8);
-          : nat(24,msbf);
+          : nat(24);
 }
 
 def ActionSetMplsTtl : type = record {
   mpls_ttl : nat(8);
-           : nat(24,msbf);
+           : nat(24);
 }
 
 def ActionDecMplsTtl : type = record {}
 
 def ActionPushVlan : type = record {
   ethertype : nat(16,msbf);
-            : nat(16,msbf);
+            : nat(16);
 }
 
 def ActionPopVlan : type = record {}
 
-def ActionPushVlan : type = record {
+def ActionPushMpls : type = record {
   mpls : nat(16,msbf);
-       : nat(16,msbf);
+       : nat(16);
 }
 
 def ActionPopMpls : type = record {}
 
 def ActionSetQueue : type = record {
-  queue_id : nat(32,msbf);
+  queue_id : nat(32);
 }
 
 def ActionGroup : type = record {
@@ -488,8 +489,8 @@ def ActionGroup : type = record {
 }
 
 def ActionSetNwTtl : type = record {
-  ttl : nat(16,msbf);
-      : nat(16,msbf);
+  ttl : nat(8);
+      : nat(24);
 }
 
 def ActionDecNwTtl : type = record {}
@@ -559,7 +560,7 @@ def FlowModCommand : type = enum(nat(8)) {
 
 def FlowModFlags : type = enum(nat(16,msbf)) {
   SEND_FLOW_REM	= 1,
-  CHECK_OVERLAP = 2,
+  CHECK_OVERLAP = 2
 }
 
 def InstructionType : type = enum(nat(16,msbf)) {
@@ -752,7 +753,8 @@ def StatsReqQueue : type = record {
 }
 
 def StatsReqGroup : type = record {
-  group_id : nat(32,msbf);	  
+  group_id : nat(32,msbf);
+           : nat(32);  
 }
 
 def StatsReqGroupDesc : type = record {}
@@ -802,7 +804,7 @@ def StatsResFlow : type = record {
   packet_count  : nat(64,msbf); 
   byte_count    : nat(64,msbf); 
   match         : Match;
-  actions       : vector(Action);
+  instructions  : vector(Instruction);
 }
 
 def StatsResFlows : type = record {
@@ -818,7 +820,7 @@ def StatsResAggregate : type = record {
 
 def StatsResTable : type = record {
   table_id           : nat(8);
-                     : nat(24);
+                     : nat(56);
   name               : nat(128,msbf); 
   wildcards          : nat(32,msbf);
   match              : nat(32,msbf);
