@@ -309,8 +309,253 @@ def PacketInReason : type = enum(nat(8)) {
   INVALID_TTL = 2
 }
 
-def Match : type = enum(nat(8)) {
+def MatchType : type = enum(nat(16, msbf)) {
+  STANDARD = 0,
+  OXM      = 1
+}
 
+def OxmClass : type = enum(nat(8)) {
+  NXM_0          = 0;
+  NXM_1          = 1;
+  OPENFLOW_BASIC = 32768;
+}
+
+def OxmHeader : type = record {
+  class   : OxmClass;
+  field   : OxmField;
+  hasmask : nat(1);
+}
+
+def OxmField : type = enum(nat(7)) {
+  IN_PORT        = 0,
+  IN_PHY_PORT    = 1,
+  METADATA       = 2,
+  ETH_DST        = 3,
+  ETH_SRC        = 4,
+  ETH_TYPE       = 5,
+  VLAN_VID       = 6,
+  VLAN_PCP       = 7,
+  IP_DSCP        = 8,
+  IP_ECN         = 9,
+  IP_PROTO       = 10,
+  IPV4_SRC       = 11,
+  IPV4_DST       = 12,
+  TCP_SRC        = 13,
+  TCP_DST        = 14,
+  UDP_SRC        = 15,
+  UDP_DST        = 16,
+  SCTP_SRC       = 17,
+  SCTP_DST       = 18,
+  ICMPV4_TYPE    = 19,
+  ICMPV4_CODE    = 20,
+  ARP_OP         = 21,
+  ARP_SPA        = 22,
+  ARP_TPA        = 23,
+  ARP_SHA        = 24,
+  ARP_THA        = 25,
+  IPV6_SRC       = 26,
+  IPV6_DST       = 27,
+  IPV6_FLABEL    = 28,
+  ICMPV6_TYPE    = 29,
+  ICMPV6_CODE    = 30,
+  IPV6_ND_TARGET = 31,
+  IPV6_ND_SLL    = 32,
+  IPV6_ND_TLL    = 33,
+  MPLS_LABEL     = 34,
+  MPLS_TC        = 35,
+  EXPERIMENTER   = 127
+}
+
+def OxmInPort : type = record {
+  in_port : nat(32,msbf);
+}
+
+def OxmInPhyPort : type = record {
+  in_phy_port : nat(32,msbf);
+}
+
+def OxmMetadata : type = record {
+  metadata : nat(64,msbf);
+}
+
+def OxmEthDst : type = record {
+  eth_dst : nat(48,msbf);
+}
+
+def OxmEthSrc : type = record {
+  eth_src : nat(48,msbf);
+}
+
+def OxmEthType : type = record {
+  eth_src : nat(16,msbf);
+}
+
+def OxmVlanVid : type = record {
+  vlan_vid : nat(13,msbf);
+}
+
+def OxmVlanPcp : type = record {
+  vlan_pcp : nat(3);
+}
+
+def OxmIpDscp : type = record {
+  ip_dscp : nat(6);
+}
+
+def OxmIpEcn : type = record {
+  ip_ecn : nat(2);
+}
+
+def OxmIpProto : type = record {
+  ip_proto : nat(8);
+}
+
+def OxmIpv4Src : type = record {
+  ipv4_src : nat(32,msbf);
+}
+
+def OxmIpv4Dst : type = record {
+  ipv4_dst : nat(32,msbf);
+}
+
+def OxmTcpSrc : type = record {
+  tcp_src : nat(16,msbf);
+}
+
+def OxmTcpDst : type = record {
+  tcp_dst : nat(16,msbf);
+}
+
+def OxmUdpSrc : type = record {
+  udp_src : nat(16,msbf);
+}
+
+def OxmUdpDst : type = record {
+  udp_dst : nat(16,msbf);
+}
+
+def OxmSctpSrc : type = record {
+  sctp_src : nat(16,msbf);
+}
+
+def OxmSctpDst : type = record {
+  sctp_dst : nat(16,msbf);
+}
+
+def OxmIpv4Type : type = record {
+  ipv4_type : nat(8);
+}
+
+def OxmIpv4Code : type = record {
+  ipv4_code : nat(8);
+}
+
+def OxmArpOp : type = record {
+  arp_op : nat(16,msbf);
+}
+
+def OxmArpSpa : type = record {
+  arp_spa : nat(32,msbf);
+}
+
+def OxmArpTpa : type = record {
+  arp_tpa : nat(32,msbf);
+}
+
+def OxmArpSha : type = record {
+  arp_sha : nat(48,msbf);
+}
+
+def OxmArpTha : type = record {
+  arp_tha : nat(48,msbf);
+}
+
+def OxmIpv6Src : type = record {
+  ipv6_src : nat(128,msbf);
+}
+
+def OxmIpv6Dst : type = record {
+  ipv6_dst : nat(128,msbf);
+}
+
+def OxmIpv6Flabel : type = record {
+  ipv6_flabel : nat(20,msbf);
+}
+
+def OxmIcmpv6Type : type = record {
+  ipcmv6_type : nat(8);
+}
+
+def OxmIpv6NdTarget : type = record {
+  ipv6_nd_target : nat(128,msbf);
+}
+
+def OxmIpv6NdSll : type = record {
+  ipv6_nd_sll : nat(48,msbf);
+}
+
+def OxmIpv6NdTll : type = record {
+  ipv6_nd_tll : nat(48,msbf);
+}
+
+def OxmMplsLabel : type = record {
+  mpls_label : nat(20,msbf);
+}
+
+def OxmMplsTc : type = record {
+  mpls_tc : nat(3);
+}
+
+def OxmPayload(t:OxmField):type = variant {
+  OxmInPort       if t == IN_PORT;
+  OxmInPhyPort    if t == IN_PHY_PORT;
+  OxmMetadata     if t == METADATA;
+  OxmEthDst       if t == ETH_DST;
+  OxmEthSrc       if t == ETH_SRC;
+  OxmEthType      if t == ETH_TYPE;
+  OxmVlanVid      if t == VLAN_VID;
+  OxmVlanPcp      if t == VLAN_PCP;
+  OxmIpDscp       if t == IP_DSCP;  
+  OxmIpEcn        if t == IP_ECN;
+  OxmIpProto      if t == IP_PROTO;
+  OxmIpv4Src      if t == IPV4_SRC;
+  OxmIpv4Dst      if t == IPV4_DST;
+  OxmTcpSrc       if t == TCP_SRC;
+  OxmTcpDst       if t == TCP_DST;
+  OxmUdpSrc       if t == UDP_SRC;
+  OxmUdpDst       if t == UDP_DST;
+  OxmSctpSrc      if t == SCTP_SRC;
+  OxmSctpDst      if t == SCTP_DST;
+  OxmIcmpv4Type   if t == ICMPV4_TYPE;
+  OxmIcmpv4Code   if t == ICMPV4_CODE;
+  OxmArpOp        if t == ARP_OP;
+  OxmArpSpa       if t == ARP_SPA;
+  OxmArpTpa       if t == ARP_TPA;
+  OxmArpTha       if t == ARP_THA;
+  OxmIpv6Src      if t == IPV6_SRC;
+  OxmIpv6Dst      if t == IPV6_DST;
+  OxmIpv6Flabel   if t == IPV6_FLABEL;
+  OxmIcmpv6Type   if t == ICMPV6_TYPE;
+  OxmIcmpv6Code   if t == ICMPV6_CODE; 
+  OxmIpv6NdTarget if t == IPV6_ND_TARGET;
+  OxmIpv6NdSll    if t == IPV6_ND_SLL;
+  OxmIpv6NdTll    if t == IPV6_ND_TLL;
+  OxmMplsLabel    if t == MPLS_LABEL;
+  OxmMplsTc       if t == MPLS_TC;
+}
+  
+def Oxm : type = record {
+  header  : OxmHeader;
+  payload : OxmPayload;
+
+  restrict(length - 4, payload);
+}
+
+def Match : type = record {
+  type        : MatchType;
+  length      : nat(16,msbf);
+              : nat(32);
+  oxms        : vector(Oxm));			  
 } 
 
 def PacketIn : type = record {
@@ -429,7 +674,7 @@ def ActionSetNwTtl : type = record {
 def ActionDecNwTtl : type = record {}
 
 def ActionSetField : type = record {
-
+  oxm : Oxm;
 }
 
 def ActionExperimenter : type = record {
@@ -822,8 +1067,25 @@ def StatsResGroupDesc : type = record {
   buckets  : vector(Bucket);
 }
 
-def StatsResGroupFeatures : type = record {
+def GroupFeatureCapabilities : type = enum(nat(32,msbf)) {	
+  0..15,
+  SELECT_WEIGHT   = 1,
+  SELECT_LIVENESS = 2,
+  CHAINING        = 4,
+  CHAINING_CHECKS = 8
+}
 
+def StatsResGroupFeatures : type = record {
+  type                : nat(32,msbf);
+  capabilities        : GroupFeatureCapabilities;
+  max_groups_all      : nat(32,msbf);
+  max_groups_select   : nat(32,msbf);
+  max_groups_indirect : nat(32,msbf);
+  max_groups_ff       : nat(32,msbf);
+  actions_all         : nat(32,msbf);
+  actions_select      : nat(32,msbf);
+  actions_indirect    : nat(32,msbf);
+  actions_ff          : nat(32,msbf);
 }
 
 def StatsResExperimenter : type = record {
