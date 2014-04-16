@@ -1,12 +1,12 @@
 def ofp : namespace {
 
-def Version : type = enum(nat(8)) {
+def Version : typename = enum(nat(8)) {
   OFP_1_0 = 1
 }
 
 def v1_0 : namespace {
 
-def Type : type = enum(nat(8)) {
+def Type : typename = enum(nat(8)) {
   HELLO = 0, ERROR = 1, ECHO_REQ = 2, ECHO_RES = 3, VENDOR = 4,
   FEATURE_REQ = 5, FEATURE_RES = 6, GET_CONFIG_REQ = 7, GET_CONFIG_RES = 8,
   SET_CONFIG = 9, PACKET_IN = 10, FLOW_REMOVED = 11, PORT_STATUS = 12,
@@ -21,7 +21,7 @@ def Data : typename = record {
 
 def Hello : typename = Data;
 
-ErrorType : type = enum(nat(16,msbf)) {
+ErrorType : typename = enum(nat(16,msbf)) {
   HELLO_FAILED    = 0,
   BAD_REQUEST     = 1,
   BAD_ACTION      = 2,
@@ -30,12 +30,12 @@ ErrorType : type = enum(nat(16,msbf)) {
   QUEUE_OP_FAILED = 5
 }
 
-HelloFailedCode : type = enum(nat(16,msbf)) {
+HelloFailedCode : typename = enum(nat(16,msbf)) {
   INCOMPATIBLE = 0,
   EPERM        = 1  
 }
 
-BadRequestCode : type = enum(nat(16,msbf)) {
+BadRequestCode : typename = enum(nat(16,msbf)) {
   BAD_VERSION    = 0,
   BAD_TYPE       = 1,
   BAD_STAT       = 2,
@@ -47,7 +47,7 @@ BadRequestCode : type = enum(nat(16,msbf)) {
   BUFFER_UNKNOWN = 8
 }
 
-BadActionCode : type = enum(nat(16,msbf)) {
+BadActionCode : typename = enum(nat(16,msbf)) {
   BAD_TYPE        = 0,
   BAD_LENGTH      = 1,
   BAD_VENDOR      = 2,
@@ -59,7 +59,7 @@ BadActionCode : type = enum(nat(16,msbf)) {
   BAD_QUEUE       = 8
 }
 
-FlowModFailedCode : type = enum(nat(16,msbf)) {
+FlowModFailedCode : typename = enum(nat(16,msbf)) {
   ALL_TABLES_FULL   = 0,
   OVERLAP           = 1,
   EPERM             = 2,
@@ -68,18 +68,18 @@ FlowModFailedCode : type = enum(nat(16,msbf)) {
   UNSUPPORTED       = 5
 }
 
-PortModFailedCode : type = enum(nat(16,msbf)) {
+PortModFailedCode : typename = enum(nat(16,msbf)) {
   BAD_PORT    = 0,
   BAD_HW_ADDR = 1
 }
 
-QueueOpFailedCode : type = enum(nat(16,msbf)) {
+QueueOpFailedCode : typename = enum(nat(16,msbf)) {
   BAD_PORT  = 0,
   BAD_QUEUE = 1,
   EPERM     = 2
 }
 
-def ErrorCode(t:ErrorType):type = variant {
+def ErrorCode(t:ErrorType):typename = variant {
   HelloFailedCode   if t == HELLO_FAILED;
   BadRequestCode    if t == BAD_REQUEST;
   BadActionCode     if t == BAD_ACTION;
@@ -90,7 +90,7 @@ def ErrorCode(t:ErrorType):type = variant {
 
 def Error : typename = record {
   type : ErrorType;
-  code : ErrorCode;
+  code : ErrorCode(type);
   data : Data;
 }
 
@@ -106,82 +106,82 @@ def Empty : typename = record {}
 
 def FeatureReq : typename = Empty;
 
-def FeatureCapabilities : type = enum(nat(32,msbf)) {
-  0..255,
-  FLOW_STATS   = 1,
-  TABLE_STATS  = 2,
-  PORT_STATS   = 4,
-  STP          = 8,
-  RESERVED     = 16,
-  IP_REASM     = 32,
-  QUEUE_STATS  = 64,
-  ARP_MATCH_IP = 128
+def FeatureCapabilities : typename = enum(nat(32,msbf)) {
+  0..(1 << 8 - 1),
+  FLOW_STATS   = 1 << 0,
+  TABLE_STATS  = 1 << 1,
+  PORT_STATS   = 1 << 2,
+  STP          = 1 << 3,
+  RESERVED     = 1 << 4,
+  IP_REASM     = 1 << 5,
+  QUEUE_STATS  = 1 << 6,
+  ARP_MATCH_IP = 1 << 7,
 }
 
-def FeatureActions : type = enum(nat(32,msbf)) {
-  0..4095,
-  OUTPUT       = 1,
-  SET_VLAN_VID = 2,
-  SET_VLAN_PCP = 4,
-  STRIP_VLAN   = 8,
-  SET_DL_SRC   = 16,
-  SET_DL_DST   = 32,
-  SET_NW_SRC   = 64,
-  SET_NW_DST   = 128,
-  SET_NW_TOS   = 256,
-  SET_TP_SRC   = 512,
-  SET_TP_DST   = 1024,
-  ENQUEUE      = 2048
+def FeatureActions : typename = enum(nat(32,msbf)) {
+  0..(1 << 12 - 1),
+  OUTPUT       = 1 << 0,
+  SET_VLAN_VID = 1 << 1,
+  SET_VLAN_PCP = 1 << 2,
+  STRIP_VLAN   = 1 << 3,
+  SET_DL_SRC   = 1 << 4,
+  SET_DL_DST   = 1 << 5,
+  SET_NW_SRC   = 1 << 6,
+  SET_NW_DST   = 1 << 7,
+  SET_NW_TOS   = 1 << 8,
+  SET_TP_SRC   = 1 << 9,
+  SET_TP_DST   = 1 << 10,
+  ENQUEUE      = 1 << 11
 }
 
-def Port_Id : type = enum(nat(16,msbf)) {
-  0..65279
-  MAX        = 65280,
-  IN_PORT    = 65528,
-  TABLE      = 65529,
-  NORMAL     = 65530,
-  FLOOD      = 65531,
-  ALL        = 65532,
-  CONTROLLER = 65533,
-  LOCAL      = 65534,
-  NONE       = 65535
+def Port_Id : typename = enum(nat(16,msbf)) {
+  0..0xFEFF
+  MAX        = 0xFF00,
+  IN_PORT    = 0xFFF8,
+  TABLE      = 0xFFF9,
+  NORMAL     = 0xFFFA,
+  FLOOD      = 0xFFFB,
+  ALL        = 0xFFFC,
+  CONTROLLER = 0xFFFD,
+  LOCAL      = 0xFFFE,
+  NONE       = 0xFFFF
 }
 
-def PortConfig : type = enum(nat(32,msbf)) {
-  0..127,
-  PORT_DOWN	  = 1,
-  NO_STP      = 2,
-  NO_RECV     = 4,
-  NO_RECV_STP = 8,
-  NO_FLOOD    = 16,
-  NO_FWD      = 32,
-  NO_PACKETIN = 64
+def PortConfig : typename = enum(nat(32,msbf)) {
+  0..(1 << 7 - 1),
+  PORT_DOWN	  = 1 << 0,
+  NO_STP      = 1 << 1,
+  NO_RECV     = 1 << 2,
+  NO_RECV_STP = 1 << 3,
+  NO_FLOOD    = 1 << 4,
+  NO_FWD      = 1 << 5,
+  NO_PACKETIN = 1 << 6
 }
 
-def PortState : type = enum(nat(32,msbf)) {
-  0..31,
-  STP_LISTEN  = 0,
-  LINK_DOWN   = 1,
-  STP_LEARN   = 2,
-  STP_FORWARD = 4,
-  STP_BLOCK   = 8,
-  STP_MASK    = 16
+def PortState : typename = enum(nat(32,msbf)) {
+  0..(1 << 5 - 1),
+  STP_LISTEN  = 0 << 0,
+  LINK_DOWN   = 1 << 0,
+  STP_LEARN   = 1 << 1,
+  STP_FORWARD = 1 << 2,
+  STP_BLOCK   = 1 << 3,
+  STP_MASK    = 1 << 4
 }
 
-def PortFeature : type = enum(nat(32,msbf)) {
-  0..4095,
-  10MB_HD    = 1,
-  10MB_FD    = 2,
-  100MD_HD   = 4,
-  100MD_FD   = 8,
-  1GB_HD     = 16,
-  1GB_FD     = 32,
-  10GB_FD    = 64,
-  COPPER     = 128,
-  FIBER      = 256,
-  AUTO_NEG   = 512,
-  PAUSE      = 1024,
-  PAUSE_ASYM = 2048
+def PortFeature : typename = enum(nat(32,msbf)) {
+  0..(1 << 12 - 1),
+  10MB_HD    = 1 << 0,
+  10MB_FD    = 1 << 1,
+  100MD_HD   = 1 << 2,
+  100MD_FD   = 1 << 3,
+  1GB_HD     = 1 << 4,
+  1GB_FD     = 1 << 5,
+  10GB_FD    = 1 << 6,
+  COPPER     = 1 << 7,
+  FIBER      = 1 << 8,
+  AUTO_NEG   = 1 << 9,
+  PAUSE      = 1 << 10,
+  PAUSE_ASYM = 1 << 11
 }
 
 def Port : typename = record {
@@ -206,7 +206,7 @@ def FeatureRes : typename = record {
 
 def GetConfigReq : typename = Empty;
 
-def ConfigFlags : type = enum(nat(16,msbf)) {
+def ConfigFlags : typename = enum(nat(16,msbf)) {
   FRAG_NORMAL = 0,
   FRAG_DROP   = 1,
   FRAG_REASM  = 2,
@@ -237,25 +237,25 @@ def PacketIn : typename = record {
   data      : Data;
 }
 
-def MatchWildcards : type = enum(nat(32,msbf)) {
-  0..4194303,
-  IN_PORT     = 1, 
-  DL_VLAN     = 2, 
-  DL_SRC      = 4,
-  DL_DST      = 8,
-  DL_TYPE     = 16,
-  NW_PROT     = 32,
-  TP_SRC      = 64,
-  TP_DST      = 128,
-  NW_SRC      = 0 | 2^(40 - subnet_length),
-  NW_DST      = 0 | 2^(46 - subnet_length),
-  DL_VLAN_PCP = 1048576,
-  NW_TOS      = 2097152,
-  ALL         = 4194303
+def MatchWildcards : typename = enum(nat(32,msbf)) {
+  0..(1 << 23 - 1),
+  IN_PORT     = 1 << 0, 
+  DL_VLAN     = 1 << 1, 
+  DL_SRC      = 1 << 2,
+  DL_DST      = 1 << 3,
+  DL_TYPE     = 1 << 4,
+  NW_PROT     = 1 << 5,
+  TP_SRC      = 1 << 6,
+  TP_DST      = 1 << 7,
+  NW_SRC      = 0 | 1 << (40 - subnet_length),
+  NW_DST      = 0 | 1 << (46 - subnet_length),
+  DL_VLAN_PCP = 1 << 20,
+  NW_TOS      = 1 << 21,
+  ALL         = 1 << 23 - 1
 }
 
-def MatchInPort : type = enum(nat(16, msbf)) {
-  0..65279
+def MatchInPort : typename = enum(nat(16, msbf)) {
+  0..0xFEFF
 }
 
 def Match : typename = record {
@@ -276,7 +276,7 @@ def Match : typename = record {
   tp_dst    : nat(16,msbf); 
 }
 
-def FlowRemovedReason : type = enum(nat(8)) {
+def FlowRemovedReason : typename = enum(nat(8)) {
   IDLE_TIMEOUT = 0,
   HARD_TIMEOUT = 1,
   DELETE       = 2
@@ -296,7 +296,7 @@ def FlowRemoved : typename = record {
   byte_count    : nat(64,msbf); 
 }
 
-def PortStatusReason : type = enum(nat(8)) {
+def PortStatusReason : typename = enum(nat(8)) {
   ADD 	 = 0,
   DELETE = 1,
   MODIFY = 2
@@ -308,7 +308,7 @@ def PortStatus : typename = record {
   port   : Port		 
 }
 
-def ActionType : type = enum(nat(16,msbf)) {
+def ActionType : typename = enum(nat(16,msbf)) {
   OUTPUT       = 0,
   SET_VLAN_VID = 1,
   SET_VLAN_PCP = 2,
@@ -321,7 +321,7 @@ def ActionType : type = enum(nat(16,msbf)) {
   SET_TP_SRC   = 9,
   SET_TP_DST   = 10,
   ENQUEUE      = 11,
-  VENDOR       = 65535
+  VENDOR       = 0xFF
 }
 
 def ActionOutput : typename = record {
@@ -370,7 +370,7 @@ def ActionEnqueue : typename = record {
 
 def ActionVendor : typename = Action3;
 
-def ActionPayload(t:ActionType):type = variant {
+def ActionPayload(t:ActionType):typename = variant {
   ActionOutput     if t == OUTPUT;
   ActionSetVlanVid if t == SET_VLAN_VID;
   ActionSetVlanPcp if t == SET_VLAN_PCP;
@@ -389,10 +389,10 @@ def ActionPayload(t:ActionType):type = variant {
 def Action : typename = record {
   type    : ActionType;
   length  : nat(16,msbf);
-  payload : constrain(length - 4, ActionPayload(ActionType));
+  payload : constrain(length - 4, ActionPayload(type));
 }
 
-def PortID : type = enum(nat(16,msbf)) {
+def PortID : typename = enum(nat(16,msbf)) {
   0..65280
 }
 
@@ -404,7 +404,7 @@ def PacketOut : typename = record {
   data        : constrain(actions_len, Data);
 }
 
-def FlowModCommand : type = enum(nat(16,msbf)) {
+def FlowModCommand : typename = enum(nat(16,msbf)) {
   ADD           = 0,
   MODIFY        = 1,
   MODIFY_STRICT = 2,
@@ -412,7 +412,7 @@ def FlowModCommand : type = enum(nat(16,msbf)) {
   DELETE_STRICT = 4,
 }
 
-def FlowModFlags : type = enum(nat(16,msbf)) {
+def FlowModFlags : typename = enum(nat(16,msbf)) {
   SEND_FLOW_REM	= 0,
   CHECK_OVERLAP = 1,
   EMERG         = 2
@@ -431,11 +431,11 @@ def FlowMod : typename = record {
   actions      : vector(Action);	
 }
 
-def PortModConfig : type = enum(nat(32,msbf)) {	
-  PORT_DOWN	  = 1,
-  NO_RECV     = 4,
-  NO_FWD      = 32,
-  NO_PACKETIN = 64
+def PortModConfig : typename = enum(nat(32,msbf)) {	
+  PORT_DOWN	  = 1 << 0,
+  NO_RECV     = 1 << 2,
+  NO_FWD      = 1 << 5,
+  NO_PACKETIN = 1 << 6
 }
 
 def PortMod : typename = record {
@@ -447,14 +447,14 @@ def PortMod : typename = record {
             : nat(32);
 }
 
-def StatsType : type = enum(nat(16,msbf)) {	
+def StatsType : typename = enum(nat(16,msbf)) {	
   DESC      = 0,
   FLOW      = 1,
   AGGREGATE = 2,
   TABLE     = 3,
   PORT      = 4,
   QUEUE     = 5,
-  VENDOR    = 65535
+  VENDOR    = 0xFF
 }
 
 def StatsReqDesc : typename = Empty;
@@ -491,7 +491,7 @@ def StatsReqVendor : typename = record {
   data      : Data;
 }
 
-def StatsReqPayload(t:StatsType):type = variant {
+def StatsReqPayload(t:StatsType):typename = variant {
   StatsReqDesc      if t == DESC;
   StatsReqFlow      if t == FLOW;
   StatsReqAggregate if t == AGGREGATE;
@@ -504,7 +504,7 @@ def StatsReqPayload(t:StatsType):type = variant {
 def StatsReq : typename = record {
   type    : StatsType;
   flags   : nat(16,msbf);
-  payload : StatsReqPayload;
+  payload : StatsReqPayload(type);
 }
 
 def StatsResDesc : typename = record {
@@ -597,7 +597,7 @@ def StatsResVendor : typename = record {
   data      : Data;
 }
 
-def StatsResPayload(t:StatsType):type = variant {
+def StatsResPayload(t:StatsType):typename = variant {
   StatsResDesc      if t == DESC;
   StatsResFlows     if t == FLOW;
   StatsResAggregate if t == AGGREGATE;
@@ -610,7 +610,7 @@ def StatsResPayload(t:StatsType):type = variant {
 def StatsRes : typename = record {
   type    : StatsType;
   flags   : nat(16,msbf);
-  payload : StatsResPayload;
+  payload : StatsResPayload(type);
 }
 
 def BarrierReq : typename = Empty;
@@ -621,7 +621,7 @@ def QueueGetConfigReq : typename = record {
        : nat(16);
 }
 
-def Property : type = enum(nat(16,msbf)) {	
+def Property : typename = enum(nat(16,msbf)) {	
   MIN_RATE = 1
 }
 
@@ -630,7 +630,7 @@ def QueuePropertyMinRate : typename = record {
        : nat(48,msbf);
 }
 
-def QueueProperyPayload(t:Property):type = variant {
+def QueueProperyPayload(t:Property):typename = variant {
   QueuePropertyMinRate if t == MIN_RATE;
 }
 
@@ -645,9 +645,7 @@ def Queue : typename = record {
   queue_id   : nat(32,msbf);
   length     : nat(16,msbf);
              : nat(16,msbf);
-  properties : vector(QueueProperty);
-
-  restrict(length - 8, properties);  
+  properties : constrain(length - 8, vector(QueueProperty));
 }
 
 def QueueGetConfigRes : typename = record {
@@ -656,7 +654,7 @@ def QueueGetConfigRes : typename = record {
   queues : vector(Queue);	   
 }
 
-def Payload(t:Type):type = variant {
+def Payload(t:Type):typename = variant {
   Hello             if t == HELLO;
   Error             if t == ERROR;
   EchoReq           if t == ECHO_REQ;
