@@ -1,12 +1,12 @@
 def ofp : namespace {
 
-def Version : type = enum(nat(8)) {
+def Version : typename = enum(nat(8)) {
   OFP_1_2 = 3
 }
 
 def v1_2 : namespace {
 
-def Type : type = enum(nat(8)) {
+def Type : typename = enum(nat(8)) {
   HELLO = 0, ERROR = 1, ECHO_REQ = 2, ECHO_RES = 3, EXPERIMENTER = 4,
   FEATURE_REQ = 5, FEATURE_RES = 6, GET_CONFIG_REQ = 7, GET_CONFIG_RES = 8,
   SET_CONFIG = 9, PACKET_IN = 10, FLOW_REMOVED = 11, PORT_STATUS = 12,
@@ -16,11 +16,13 @@ def Type : type = enum(nat(8)) {
   ROLE_REQ = 24, ROLE_RES = 25
 }
 
-def Hello : type = record {
+def Data : typename = record {
   data : vector(nat(8));
 }
 
-ErrorType : type = enum(nat(16,msbf)) {
+def Hello : typename = Data;
+
+ErrorType : typename = enum(nat(16,msbf)) {
   HELLO_FAILED         = 0,
   BAD_REQUEST          = 1,
   BAD_ACTION           = 2,
@@ -35,12 +37,12 @@ ErrorType : type = enum(nat(16,msbf)) {
   ROLE_REQUEST_FAILED  = 11
 }
 
-HelloFailedCode : type = enum(nat(16,msbf)) {
+HelloFailedCode : typename = enum(nat(16,msbf)) {
   INCOMPATIBLE = 0,
   EPERM        = 1  
 }
 
-BadRequestCode : type = enum(nat(16,msbf)) {
+BadRequestCode : typename = enum(nat(16,msbf)) {
   BAD_VERSION           = 0,
   BAD_TYPE              = 1,
   BAD_STAT              = 2,
@@ -56,7 +58,7 @@ BadRequestCode : type = enum(nat(16,msbf)) {
   BAD_PACKET            = 12
 }
 
-BadActionCode : type = enum(nat(16,msbf)) {
+BadActionCode : typename = enum(nat(16,msbf)) {
   BAD_TYPE              = 0,
   BAD_LENGTH            = 1,
   BAD_EXPERIMENTER      = 2,
@@ -75,7 +77,7 @@ BadActionCode : type = enum(nat(16,msbf)) {
   BAD_SET_ARGUMENT      = 15
 }
 
-BadInstructionCode : type = enum(nat(16,msbf)) {
+BadInstructionCode : typename = enum(nat(16,msbf)) {
   UNKNOWN_INST          = 0,
   UNSUP_INST            = 1,
   BAD_TABLE_ID          = 2,
@@ -87,7 +89,7 @@ BadInstructionCode : type = enum(nat(16,msbf)) {
   EPERM                 = 8
 }
 
-BadMatch : type = enum(nat(16,msbf)) {
+BadMatch : typename = enum(nat(16,msbf)) {
   BAD_TYPE         = 0,
   BAD_LENGTH       = 1,
   BAD_TAG          = 2,
@@ -102,7 +104,7 @@ BadMatch : type = enum(nat(16,msbf)) {
   EPERM            = 11
 }
 
-FlowModFailedCode : type = enum(nat(16,msbf)) {
+FlowModFailedCode : typename = enum(nat(16,msbf)) {
   UNKNOWN      = 0,
   TABLE_FULL   = 1,
   BAD_TABLE_ID = 2,
@@ -113,7 +115,7 @@ FlowModFailedCode : type = enum(nat(16,msbf)) {
   BAD_FLAGS    = 7
 }
 
-GroupModFailedCode : type = enum(nat(16,msbf)) {
+GroupModFailedCode : typename = enum(nat(16,msbf)) {
   GROUP_EXISTS         = 0,
   INVALID_GROUP        = 1,
   WEIGHT_UNSUPPORTED   = 2,
@@ -131,7 +133,7 @@ GroupModFailedCode : type = enum(nat(16,msbf)) {
   EPERM                = 14
 }
 
-PortModFailedCode : type = enum(nat(16,msbf)) {
+PortModFailedCode : typename = enum(nat(16,msbf)) {
   BAD_PORT      = 0,
   BAD_HW_ADDR   = 1,
   BAD_CONFIG    = 2,
@@ -139,31 +141,31 @@ PortModFailedCode : type = enum(nat(16,msbf)) {
   EPERM         = 4
 }
 
-TableModFailedCode : type = enum(nat(16,msbf)) {
+TableModFailedCode : typename = enum(nat(16,msbf)) {
   BAD_TABLE  = 0,
   BAD_CONFIG = 1,
   EPERM      = 2
 }
 
-QueueOpFailedCode : type = enum(nat(16,msbf)) {
+QueueOpFailedCode : typename = enum(nat(16,msbf)) {
   BAD_PORT  = 0,
   BAD_QUEUE = 1,
   EPERM     = 2
 }
 
-SwitchConfigFailedCode : type = enum(nat(16,msbf)) {
+SwitchConfigFailedCode : typename = enum(nat(16,msbf)) {
   BAD_FLAGS = 0,
   BAD_LEN   = 1,
   EPERM     = 2
 }
 
-RoleRequestFailedCode : type = enum(nat(16,msbf)) {
+RoleRequestFailedCode : typename = enum(nat(16,msbf)) {
   STALE       = 0,
   UNSUPPORTED = 1,
   BAD_ROLE    = 2
 }
 
-def ErrorCode(t:ErrorType):type = variant {
+def ErrorCode(t:ErrorType):typename = variant {
   HelloFailedCode        if t == HELLO_FAILED;
   BadRequestCode         if t == BAD_REQUEST;
   BadActionCode          if t == BAD_ACTION;
@@ -178,92 +180,89 @@ def ErrorCode(t:ErrorType):type = variant {
   RoleRequestFailedCode  if t == ROLE_REQUEST_FAILED;
 }
 
-def Error : type = record {
+def Error : typename = record {
   type : ErrorType;
   code : ErrorCode;
   data : vector(nat(8));
 }
 
-def EchoReq : type = record {
-  data : vector(nat(8));
-}
+def EchoReq : typename = Data;
+def EchoRes : typename = Data;
 
-def EchoRes : type = record {
-  data : vector(nat(8));
-}
-
-def Experimenter : type = record {
+def Experimenter : typename = record {
   id   : nat(32,msbf);
   type : nat(32,msbf);
-  data : vector(nat(8));
+  data : Data;
 }
 
-def FeatureReq : type = record {}
+def Empty : typename = record {}
 
-def FeatureCapabilities : type = enum(nat(32,msbf)) {
-  0..511,
-  FLOW_STATS   = 1,
-  TABLE_STATS  = 2,
-  PORT_STATS   = 4,
-  GROUP_STATS  = 8,
-  IP_REASM     = 32,
-  QUEUE_STATS  = 64,
-  PORT_BLOCKED = 256
+def FeatureReq : typename = Empty;
+
+def FeatureCapabilities : typename = enum(nat(32,msbf)) {
+  0..(1 << 9 - 1),
+  FLOW_STATS   = 1 << 0,
+  TABLE_STATS  = 1 << 1,
+  PORT_STATS   = 1 << 2,
+  GROUP_STATS  = 1 << 3,
+  IP_REASM     = 1 << 5,
+  QUEUE_STATS  = 1 << 6,
+  PORT_BLOCKED = 1 << 8,
 }
 
-def Port_Id : type = enum(nat(32,msbf)) {
-  0..4294967039
-  MAX        = 4294967040,
-  IN_PORT    = 4294967288,
-  TABLE      = 4294967289,
-  NORMAL     = 4294967290,
-  FLOOD      = 4294967291,
-  ALL        = 4294967292,
-  CONTROLLER = 4294967293,
-  LOCAL      = 4294967294,
-  ANY        = 4294967295
+def Port_Id : typename = enum(nat(32,msbf)) {
+  0..0xFFFFFFFF
+  MAX        = 0xFFFFFF00,
+  IN_PORT    = 0xFFFFFFF8,
+  TABLE      = 0xFFFFFFF9,
+  NORMAL     = 0xFFFFFFFA,
+  FLOOD      = 0xFFFFFFFB,
+  ALL        = 0xFFFFFFFC,
+  CONTROLLER = 0xFFFFFFFD,
+  LOCAL      = 0xFFFFFFFE,
+  ANY        = 0xFFFFFFFF
 }
 
-def PortConfig : type = enum(nat(32,msbf)) {
-  0..127,
-  PORT_DOWN	  = 1,
-  NO_RECV     = 4,
-  NO_FWD      = 32,
-  NO_PACKETIN = 64
+def PortConfig : typename = enum(nat(32,msbf)) {
+  0..(1 << 7 - 1),
+  PORT_DOWN	  = 1 << 0,
+  NO_RECV     = 1 << 2,
+  NO_FWD      = 1 << 5,
+  NO_PACKETIN = 1 << 6
 }
 
-def PortState : type = enum(nat(32,msbf)) {
-  0..7,
-  LINK_DOWN   = 1,
-  BLOCKED     = 2,
-  LIVE        = 4
+def PortState : typename = enum(nat(32,msbf)) {
+  0..(1 << 3 - 1),
+  LINK_DOWN   = 1 << 0,
+  BLOCKED     = 1 << 1,
+  LIVE        = 1 << 2,
 }
 
-def PortFeature : type = enum(nat(32,msbf)) {
-  0..65535,
-  10MB_HD    = 1,
-  10MB_FD    = 2,
-  100MD_HD   = 4,
-  100MD_FD   = 8,
-  1GB_HD     = 16,
-  1GB_FD     = 32,
-  10GB_FD    = 64,
-  40GB_FD    = 128,
-  100GB_FD   = 256,
-  1TB_FD     = 512, 
-  OTHER      = 1024,
-  COPPER     = 2048,
-  FIBER      = 4096,
-  AUTO_NEG   = 8192,
-  PAUSE      = 16384,
-  PAUSE_ASYM = 32768
+def PortFeature : typename = enum(nat(32,msbf)) {
+  0..(1 << 16 - 1),
+  10MB_HD    = 1 << 0,
+  10MB_FD    = 1 << 1,
+  100MD_HD   = 1 << 2,
+  100MD_FD   = 1 << 3,
+  1GB_HD     = 1 << 4,
+  1GB_FD     = 1 << 5,
+  10GB_FD    = 1 << 6,
+  40GB_FD    = 1 << 7,
+  100GB_FD   = 1 << 8,
+  1TB_FD     = 1 << 9,
+  OTHER      = 1 << 10,
+  COPPER     = 1 << 11,
+  FIBER      = 1 << 12,
+  AUTO_NEG   = 1 << 13,
+  PAUSE      = 1 << 14,
+  PAUSE_ASYM = 1 << 15
 }
 
-def Port : type = record {
+def Port : typename = record {
   port_id    : Port_Id;
              : nat(32);
   hw_addr    : nat(48,msbf);
-  name       : nat(128,msbf);
+  name       : array(char,16);
   config     : PortConfig;
   state      : PortState;
   curr       : PortFeature;
@@ -274,59 +273,53 @@ def Port : type = record {
   max_speed  : nat(32,msbf);
 }
 
-def FeatureRes : type = record {
+def FeatureRes : typename = record {
   datapath-id  : nat(64,msbf);
   n_buffers    : nat(32,msbf);
   n_tables     : nat(8);
                : nat(24);
   capabilities : FeatureCapabilities;
-  reserved     : nat(32,msbf);
+  actions      : FeatureActions;
   ports        : vector(Port);
 }
 
-def GetConfigReq : type = record {}
+def GetConfigReq : typename = Empty;
 
-def ConfigFlags : type = enum(nat(16,msbf)) {
+def ConfigFlags : typename = enum(nat(16,msbf)) {
   FRAG_NORMAL = 0,
   FRAG_DROP   = 1,
-  FRAG_REASM  = 1 << 1,
-  FRAG_MASK   = 3,
+  FRAG_REASM  = 2,
+  FRAG_MASK   = 3
 }
 
-def GetConfigRes : type = record {
-  flags : ConfigFlags;
+def GetConfigRes : typename = record {
+  flags         : ConfigFlags;
   miss_send_len : nat(16,msbf);
 }
 
-def SetConfig : type = record {
-  flags : ConfigFlags;
+def SetConfig : typename = record {
+  flags         : ConfigFlags;
   miss_send_len : nat(16,msbf);
 }
 
-def PacketInReason : type = enum(nat(8)) {
+def PacketInReason : typename = enum(nat(8)) {
   NO_MACTH    = 0,
   ACTION      = 1,
   INVALID_TTL = 2
 }
 
-def MatchType : type = enum(nat(16, msbf)) {
+def MatchType : typename = enum(nat(16, msbf)) {
   STANDARD = 0,
   OXM      = 1
 }
 
-def OxmClass : type = enum(nat(8)) {
+def OxmClass : typename = enum(nat(8)) {
   NXM_0          = 0;
   NXM_1          = 1;
-  OPENFLOW_BASIC = 32768;
+  OPENFLOW_BASIC = 0x8000;
 }
 
-def OxmHeader : type = record {
-  class   : OxmClass;
-  field   : OxmField;
-  hasmask : nat(1);
-}
-
-def OxmField : type = enum(nat(7)) {
+def OxmField : typename = enum(nat(7)) {
   IN_PORT        = 0,
   IN_PHY_PORT    = 1,
   METADATA       = 2,
@@ -366,147 +359,100 @@ def OxmField : type = enum(nat(7)) {
   EXPERIMENTER   = 127
 }
 
-def OxmInPort : type = record {
-  in_port : nat(32,msbf);
+def Oxm1 : typename = record {
+  data : nat(32,msbf);
 }
 
-def OxmInPhyPort : type = record {
-  in_phy_port : nat(32,msbf);
-}
+def OxmInPort : typename = Oxm1; 
+def OxmInPhyPort : type = Oxm1; 
 
-def OxmMetadata : type = record {
+def OxmMetadata : typename = record {
   metadata : nat(64,msbf);
 }
 
-def OxmEthDst : type = record {
-  eth_dst : nat(48,msbf);
+def Oxm2 : typename = record {
+  data : nat(48,msbf);
 }
 
-def OxmEthSrc : type = record {
-  eth_src : nat(48,msbf);
+def OxmEthDst : typename = Oxm2;
+def OxmEthSrc : typename = Oxm2;
+
+def Oxm3 : typename = record {
+  data : nat(16,msbf);
 }
 
-def OxmEthType : type = record {
-  eth_src : nat(16,msbf);
-}
+def OxmEthType : typename = Oxm3;
 
-def OxmVlanVid : type = record {
+def OxmVlanVid : typename = record {
   vlan_vid : nat(13,msbf);
 }
 
-def OxmVlanPcp : type = record {
-  vlan_pcp : nat(3);
+def Oxm7 : typename = record {
+  data : nat(3);
 }
 
-def OxmIpDscp : type = record {
+def OxmVlanPcp : typename = Oxm7;
+
+def OxmIpDscp : typename = record {
   ip_dscp : nat(6);
 }
 
-def OxmIpEcn : type = record {
+def OxmIpEcn : typename = record {
   ip_ecn : nat(2);
 }
 
-def OxmIpProto : type = record {
-  ip_proto : nat(8);
+def Oxm4 : typename = record {
+  data : nat(8);
 }
 
-def OxmIpv4Src : type = record {
-  ipv4_src : nat(32,msbf);
+def OxmIpProto : typename = Oxm4; 
+
+def OxmIpv4Src : typename = Oxm1;
+def OxmIpv4Dst: typename = Oxm1;
+
+def OxmTcpSrc : typename = Oxm3;
+def OxmTcpDst : typename = Oxm3;
+def OxmUdpSrc : typename = Oxm3;
+def OxmUdpDst : typename = Oxm3;
+def OxmSctpSrc : typename = Oxm3;
+def OxmSctpDst : typename = Oxm3;
+
+def OxmIpv4Type : typename = Oxm4;
+def OxmIpv4Code : typename = Oxm4;
+
+def OxmArpOp : typename = Oxm3;
+
+def OxmArpSpa : typename = Oxm1;
+def OxmArpTpa : typename = Oxm1;
+
+def OxmArpSha : typename = Oxm2;
+def OxmArpTha : typename = Oxm2;
+
+def Oxm5 : typename = record {
+  data : array(char, 16);
 }
 
-def OxmIpv4Dst : type = record {
-  ipv4_dst : nat(32,msbf);
+def OxmIpv6Src : typename = Oxm5;
+def OxmIpv6Dst : typename = Oxm5;
+
+def Oxm6 : typename = record {
+  data : nat(20,msbf);
 }
 
-def OxmTcpSrc : type = record {
-  tcp_src : nat(16,msbf);
-}
+def OxmIpv6Flabel : typename = Oxm6;
 
-def OxmTcpDst : type = record {
-  tcp_dst : nat(16,msbf);
-}
+def OxmIcmpv6Type : typename = Oxm4;
 
-def OxmUdpSrc : type = record {
-  udp_src : nat(16,msbf);
-}
+def OxmIpv6NdTarget : typename = Oxm5;
 
-def OxmUdpDst : type = record {
-  udp_dst : nat(16,msbf);
-}
+def OxmIpv6NdSll : typename = Oxm2;
+def OxmIpv6NdTll : typename = Oxm2;
 
-def OxmSctpSrc : type = record {
-  sctp_src : nat(16,msbf);
-}
+def OxmMplsLabel : typename = Oxm6;
 
-def OxmSctpDst : type = record {
-  sctp_dst : nat(16,msbf);
-}
+def OxmMplsTc : typename = Oxm7;
 
-def OxmIpv4Type : type = record {
-  ipv4_type : nat(8);
-}
-
-def OxmIpv4Code : type = record {
-  ipv4_code : nat(8);
-}
-
-def OxmArpOp : type = record {
-  arp_op : nat(16,msbf);
-}
-
-def OxmArpSpa : type = record {
-  arp_spa : nat(32,msbf);
-}
-
-def OxmArpTpa : type = record {
-  arp_tpa : nat(32,msbf);
-}
-
-def OxmArpSha : type = record {
-  arp_sha : nat(48,msbf);
-}
-
-def OxmArpTha : type = record {
-  arp_tha : nat(48,msbf);
-}
-
-def OxmIpv6Src : type = record {
-  ipv6_src : nat(128,msbf);
-}
-
-def OxmIpv6Dst : type = record {
-  ipv6_dst : nat(128,msbf);
-}
-
-def OxmIpv6Flabel : type = record {
-  ipv6_flabel : nat(20,msbf);
-}
-
-def OxmIcmpv6Type : type = record {
-  ipcmv6_type : nat(8);
-}
-
-def OxmIpv6NdTarget : type = record {
-  ipv6_nd_target : nat(128,msbf);
-}
-
-def OxmIpv6NdSll : type = record {
-  ipv6_nd_sll : nat(48,msbf);
-}
-
-def OxmIpv6NdTll : type = record {
-  ipv6_nd_tll : nat(48,msbf);
-}
-
-def OxmMplsLabel : type = record {
-  mpls_label : nat(20,msbf);
-}
-
-def OxmMplsTc : type = record {
-  mpls_tc : nat(3);
-}
-
-def OxmPayload(t:OxmField):type = variant {
+def OxmPayload(t:OxmField):typename = variant {
   OxmInPort       if t == IN_PORT;
   OxmInPhyPort    if t == IN_PHY_PORT;
   OxmMetadata     if t == METADATA;
@@ -544,38 +490,38 @@ def OxmPayload(t:OxmField):type = variant {
   OxmMplsTc       if t == MPLS_TC;
 }
   
-def Oxm : type = record {
-  header  : OxmHeader;
-  payload : OxmPayload;
-
-  restrict(length - 4, payload);
+def Oxm : typename = record {
+  class   : OxmClass;
+  field   : OxmField;
+  hasmask : nat(1);
+  payload : constrain(length - 4, OxmPayload(field));
 }
 
-def Match : type = record {
+def Match : typename = record {
   type        : MatchType;
   length      : nat(16,msbf);
               : nat(32);
   oxms        : vector(Oxm));			  
 } 
 
-def PacketIn : type = record {
+def PacketIn : typename = record {
   buffer_id   : nat(32,msbf);
   total_len   : nat(16,msbf);
   reason      : PacketInReason;
   table_id    : nat(8);
   match       : Match;
               : nat(16);
-  data        : vector(nat(8));
+  data        : Data;
 }
 
-def FlowRemovedReason : type = enum(nat(8)) {
+def FlowRemovedReason : typename = enum(nat(8)) {
   IDLE_TIMEOUT = 0,
   HARD_TIMEOUT = 1,
   DELETE       = 2,
   GROUP_DELETE = 3
 }
 
-def FlowRemoved : type = record {
+def FlowRemoved : typename = record {
   cookie        : nat(64,msbf);
   priority      : nat(16,msbf);  
   reason    	: FlowRemovedReason;
@@ -589,23 +535,19 @@ def FlowRemoved : type = record {
   match         : Match;  
 }
 
-def PortStatusReason : type = enum(nat(8)) {
+def PortStatusReason : typename = enum(nat(8)) {
   ADD 	 = 0,
   DELETE = 1,
   MODIFY = 2
 }
 
-def PortStatus : type = record {
+def PortStatus : typename = record {
   reason : PortStatusReason;
          : nat(56);  
   port   : Port		 
 }
 
-def PortID : type = enum(nat(32,msbf)) {
-  0..4294967040
-}
-
-def ActionType : type = enum(nat(16,msbf)) {
+def ActionType : typename = enum(nat(16,msbf)) {
   OUTPUT         = 0,
   COPY_TTL_OUT   = 11,
   COPY_TTL_IN    = 12,
@@ -620,68 +562,63 @@ def ActionType : type = enum(nat(16,msbf)) {
   SET_NW_TTL     = 23,
   DEC_NW_TTL     = 24,
   SET_FIELD      = 25,
-  EXPERIMENTER   = 65535
+  EXPERIMENTER   = 0xFF
 }
 
-def ActionHeader : type = record {
+def ActionHeader : typename = record {
   type    : ActionType;
   length  : nat(16,msbf);
 }
 
-def ActionOutput : type = record {
-  port    : Port_id;
+def ActionOutput : typename = record {
+  port    : Port_Id;
   max_len : nat(16,msbf);
           : nat(48);
 }
 
-def ActionCopyTtlOut : type = record {}
-def ActionCopyTtlIn : type = record {}
+def ActionCopyTtlOut : typename = Empty;
+def ActionCopyTtlIn : typename = Empty;
 
-def ActionSetMplsTtl : type = record {
-  mpls_ttl : nat(8);
-           : nat(24);
+def Action1 : typename = record {
+  data : nat(8);
+       : nat(24);
 }
 
-def ActionDecMplsTtl : type = record {}
+def ActionSetMplsTtl : typename = Action1;
 
-def ActionPushVlan : type = record {
-  ethertype : nat(16,msbf);
-            : nat(16);
-}
+def ActionDecMplsTtl : typename = Empty;
 
-def ActionPopVlan : type = record {}
-
-def ActionPushMpls : type = record {
-  mpls : nat(16,msbf);
+def Action2 : typename = record {
+  data : nat(16,msbf);
        : nat(16);
 }
 
-def ActionPopMpls : type = record {}
+def ActionPushMpls : typename = Action2;
 
-def ActionSetQueue : type = record {
-  queue_id : nat(32,msbf);
+def ActionPopMpls : typename = Empty;
+
+def ActionPushVlan : typename = Action2;
+
+def ActionPopVlan : typename = Empty;
+
+def Action3: typename = record {
+  data : nat(32,msbf);
 }
 
-def ActionGroup : type = record {
-  group_id : nat(32,msbf);
-}
+def ActionSetQueue : typename = Action3;
+def ActionGroup : typename = Action3;
 
-def ActionSetNwTtl : type = record {
-  ttl : nat(8,msbf);
-      : nat(24);
-}
+def ActionSetNwTtl : typename = Action1;
 
-def ActionDecNwTtl : type = record {}
+def ActionDecNwTtl : typename = Empty;
 
-def ActionSetField : type = record {
+def ActionSetField : typename = record {
   oxm : Oxm;
 }
 
-def ActionExperimenter : type = record {
-  experimenter : nat(32,msbf);
-}
+def ActionExperimenter : typename = Action3;
 
-def ActionPayload(t:ActionType):type = variant {
+def ActionPayload(t:ActionType):typename = variant {
   ActionOutput       if t == OUTPUT;
   ActionCopyTtlOut   if t == COPY_TTL_OUT;
   ActionCopyTtlIn    if t == COPY_TTL_IN;
@@ -699,25 +636,26 @@ def ActionPayload(t:ActionType):type = variant {
   ActionExperimenter if t == EXPERIMENTER;
 }
 
-def Action : type = record {
-  header  : ActionHeader;
-  payload : ActionPayload;
-  
-  restrict(length - 4, payload);
+def Action : typename = record {
+  type    : ActionType;
+  length  : nat(16,msbf);
+  payload : constrain(length - 4, ActionPayload(type));
 }
 
-def PacketOut : type = record {
+def PortID : typename = enum(nat(16,msbf)) {
+  0..4294967040
+}
+
+def PacketOut : typename = record {
   buffer_id   : nat(32,msbf);
   in_port     : PortID;
   actions_len : nat(16,msbf);
-              : nat(32);
-  actions     : vector(Action);
-  data        : vector(nat(8));
-  
-  restrict(actions_len, data);
+              : nat(32);	
+  actions     : vector(Action);			
+  data        : constrain(actions_len, Data);
 }
 
-def FlowModCommand : type = enum(nat(8)) {
+def FlowModCommand : typename = enum(nat(16,msbf)) {
   ADD           = 0,
   MODIFY        = 1,
   MODIFY_STRICT = 2,
@@ -725,69 +663,61 @@ def FlowModCommand : type = enum(nat(8)) {
   DELETE_STRICT = 4,
 }
 
-def FlowModFlags : type = enum(nat(16,msbf)) {
+def FlowModFlags : typename = enum(nat(16,msbf)) {
   SEND_FLOW_REM	= 1,
   CHECK_OVERLAP = 2,
   RESET_COUNTS  = 4
 }
 
-def InstructionType : type = enum(nat(16,msbf)) {
+def InstructionType : typename = enum(nat(16,msbf)) {
   GOTO_TABLE     = 1,
   WRITE_METADATA = 2,
   WRITE_ACTIONS  = 3,
   APPLY_ACTIONS  = 4,
   CLEAR_ACTIONS  = 5,
-  EXPERIMENTER   = 65535
+  EXPERIMENTER   = 0xFF
 }
 
-def InstructionGotoTable : type = record {
+def InstructionGotoTable : typename = record {
   table_id : nat(8);
            : nat(24);
 }
 
-def InstructionWriteMetadata : type = record {
+def InstructionWriteMetadata : typename = record {
                 : nat(32);
   metadata      : nat(64,msbf);
   metadata_mask : nat(64,msbf);
 }
 
-def InstructionWriteActions : type = record {
+def InstructionActions : typename = record {
           : nat(32);
   actions : vector(Action);
 }
 
-def InstructionApplyActions : type = record {
-          : nat(32);
-  actions : vector(Action);
-}
+def InstructionWriteActions : typename = InstructionActions;
+def InstructionApplyActions : typename = InstructionActions;
+def InstructionClearActions : typename = InstructionActions;
 
-def InstructionClearActions : type = record {
-          : nat(32);
-  actions : vector(Action);
-}
-
-def InstructionExperimenter : type = record {
+def InstructionExperimenter : typename = record {
   experimenter_id : nat(32,msbf);
 }
 
-def InstructionPayload(t:ActionType):type = variant {
+def InstructionPayload(t:ActionType):typename = variant {
   InstructionGotoTable     if t == GOTO_TABLE;
   InstructionWriteMetadata if t == WRITE_METADATA;
   InstructionWriteActions  if t == WRITE_ACTIONS;
   InstructionApplyActions  if t == APPLY_ACTIONS;
   InstructionClearActions  if t == CLEAR_ACTIONS;
-  Experimenter             if t == EXPERIMENTER;
+  InstructionExperimenter  if t == EXPERIMENTER;
 }
   
-def Instruction : type = record {
+def Instruction : typename = record {
   type    : InstructionType;
   length  : nat(16,msbf);
-  payload : InstructionPayload;
-  
-  restrict(length - 4, payload);
+  payload : constrain(length - 4, InstructionPayload(type));
 }
 
-def FlowMod : type = record {
+def FlowMod : typename = record {
   cookie       : nat(64,msbf);
   cookie_mask  : nat(64,msbf);
   table_id     : nat(8);  
@@ -804,20 +734,20 @@ def FlowMod : type = record {
   instructions : vector(Instruction);	
 }
 
-def GroupModCommand : type = enum(nat(16,msbf)) {
+def GroupModCommand : typename = enum(nat(16,msbf)) {
   ADD    = 0,
   MODIFY = 1,
   DELETE = 2
 }
 
-def GroupModType : type = enum(nat(8)) {
+def GroupModType : typename = enum(nat(8)) {
   ALL           = 0,
   SELECT        = 1,
   INDIRECT      = 2,
   FAST_FAILOVER = 3
 }
 
-def Bucket : type = record {
+def Bucket : typename = record {
   length        : nat(16,msbf);
   weight        : nat(16,msbf);
   watch_port    : nat(32,msbf);
@@ -826,7 +756,7 @@ def Bucket : type = record {
   action_header : ActionHeader;
 }
 
-def GroupMod : type = record {
+def GroupMod : typename = record {
   command  : GroupModCommand;
   type     : GroupModType;
            : nat(8);
@@ -834,17 +764,17 @@ def GroupMod : type = record {
   buckets  : vector(Bucket);
 }
 
-def PortModConfig : type = enum(nat(32,msbf)) {	
-  PORT_DOWN	  = 1,
-  NO_STP      = 2,
-  NO_RECV     = 4,
-  NO_RECV_STP = 8,
-  NO_FLOOD    = 16,
-  NO_FWD      = 32,
-  NO_PACKETIN = 64
+def PortModConfig : typename = enum(nat(32,msbf)) {	
+  PORT_DOWN	  = 1 << 0,
+  NO_STP      = 1 << 1,
+  NO_RECV     = 1 << 2,
+  NO_RECV_STP = 1 << 3,
+  NO_FLOOD    = 1 << 4,
+  NO_FWD      = 1 << 5,
+  NO_PACKETIN = 1 << 6
 }
 
-def PortMod : type = record {
+def PortMod : typename = record {
   port      : Port_Id;
             : nat(32);
   hw_addr   : nat(48,msbf);
@@ -855,24 +785,24 @@ def PortMod : type = record {
             : nat(32);
 }
 
-def Table_Id : type = enum(nat(8)) {	
+def Table_Id : typename = enum(nat(8)) {	
   0..254
 }
 
-def TableModConfig: type = enum(nat(32,msbf)) {	
+def TableModConfig: typename = enum(nat(32,msbf)) {	
   MISS_CONTROLLER = 0,
   MISS_CONTINUE   = 1,
   MISS_DROP       = 2,
   MISS_MASK       = 3
 }
 
-def TableMod : type = record {
+def TableMod : typename = record {
   table_id : Table_Id;
            : nat(24);  
   config   : TableModConfig; 
 }
 
-def StatsType : type = enum(nat(16,msbf)) {	
+def StatsType : typename = enum(nat(16,msbf)) {	
   DESC           = 0,
   FLOW           = 1,
   AGGREGATE      = 2,
@@ -882,12 +812,12 @@ def StatsType : type = enum(nat(16,msbf)) {
   GROUP          = 6,
   GROUP_DESC     = 7,
   GROUP_FEATURES = 8,
-  EXPERIMENTER   = 65535
+  EXPERIMENTER = 0xFF
 }
 
-def StatsReqDesc : type = record {}
+def StatsReqDesc : typename = Empty;
 
-def StatsReqFlow : type = record {
+def StatsReqFlow : typename = record {
   table_id    : nat(8);
               : nat(24);
   out_port    : Port_Id;
@@ -898,7 +828,7 @@ def StatsReqFlow : type = record {
   match       : Match;
 }
 
-def StatsReqAggregate : type = record {
+def StatsReqAggregate : typename = record {
   table_id    : nat(8);
               : nat(24);
   out_port    : Port_Id;
@@ -909,33 +839,33 @@ def StatsReqAggregate : type = record {
   match       : Match;
 }
 
-def StatsReqTable : type = record {}
+def StatsReqTable : typename = Empty;
 
-def StatsReqPort : type = record {
+def StatsReqPort : typename = record {
   port_no : Port_Id;
-          : nat(32);
+          : nat(48);
 }
 
-def StatsReqQueue : type = record {
+def StatsReqQueue : typename = record {
   port_no  : Port_Id;
   queue_id : nat(32,msbf);	  
 }
 
-def StatsReqGroup : type = record {
+def StatsReqGroup : typename = record {
   group_id : nat(32,msbf);
            : nat(32);  
 }
 
-def StatsReqGroupDesc : type = record {}
-def StatsReqGroupFeatures : type = record {}
+def StatsReqGroupDesc : typename = Empty;
+def StatsReqGroupFeatures : typename = Empty;
 
-def StatsReqExperimenter : type = record {
+def StatsReqExperimenter : typename = record {
   experimenter_id : nat(32,msbf);
   exp_type        : nat(32,msbf);
-  data            : vector(nat(8));
+  data            : Data;
 }
 
-def StatsReqPayload(t:StatsType):type = variant {
+def StatsReqPayload(t:StatsType):typename = variant {
   StatsReqDesc          if t == DESC;
   StatsReqFlow          if t == FLOW;
   StatsReqAggregate     if t == AGGREGATE;
@@ -948,21 +878,21 @@ def StatsReqPayload(t:StatsType):type = variant {
   StatsReqExperimenter  if t == EXPERIMENTER;
 }
   
-def StatsReq : type = record {
+def StatsReq : typename = record {
   type    : StatsType;
   flags   : nat(16,msbf);
-  payload : StatsReqPayload;
+  payload : StatsReqPayload(type);
 }
 
-def StatsResDesc : type = record {
-  mfr_desc   : nat(2048,msbf);
-  hw_desc    : nat(2048,msbf);
-  sw_desc    : nat(2048,msbf);
-  serial_num : nat(256,msbf);
-  dp_desc    : nat(2048,msbf);
+def StatsResDesc : typename = record {
+  mfr_desc   : array(char, 256);
+  hw_desc    : array(char, 256);
+  sw_desc    : array(char, 256);
+  serial_num : array(char, 32);
+  dp_desc    : array(char, 256);
 }
 
-def StatsResFlow : type = record {
+def StatsResFlow : typename = record {
   length        : nat(16,msbf);
   table_id      : nat(8);
                 : nat(8);
@@ -979,21 +909,21 @@ def StatsResFlow : type = record {
   instructions  : vector(Instruction);
 }
 
-def StatsResFlows : type = record {
+def StatsResFlows : typename = record {
   flows : vector(StatsResFlow);
 }
 
-def StatsResAggregate : type = record {
+def StatsResAggregate : typename = record {
   packet_count : nat(64,msbf); 
   byte_count   : nat(64,msbf); 
   flow_count   : nat(32,msbf); 
                : nat(32);
 }
 
-def StatsResTable : type = record {
+def StatsResTable : typename = record {
   table_id           : nat(8);
                      : nat(56);
-  name               : nat(128,msbf); 
+  name               : array(char, 16);
   wildcards          : nat(32,msbf);
   match              : nat(32,msbf);
   instructions       : nat(32,msbf);
@@ -1003,16 +933,16 @@ def StatsResTable : type = record {
   max_entries        : nat(32,msbf);
   active_count       : nat(32,msbf);
   lookup_count       : nat(64,msbf);
-  matched_count      : nat(64,msbf);  
+  matched_count      : nat(64,msbf); 
 }
 
-def StatsResTables : type = record {
+def StatsResTables : typename = record {
   tables : vector(StatsResTable);
 }
 
-def StatsResPort : type = record {
-  port_no      : Port_Id;
-               : nat(32);
+def StatsResPort : typename = record {
+  port_no      : PortID;
+               : nat(48);
   rx_packets   : nat(64,msbf); 
   tx_packets   : nat(64,msbf);   
   rx_bytes     : nat(64,msbf); 
@@ -1027,11 +957,11 @@ def StatsResPort : type = record {
   collisions   : nat(64,msbf);  
 }
 
-def StatsResPorts : type = record {
+def StatsResPorts : typename = record {
   ports : vector(StatsResPort);
 }
 
-def StatsResQueue : type = record {
+def StatsResQueue : typename = record {
   length     : nat(32,msbf);
   queue_id   : nat(32,msbf);	
   tx_bytes   : nat(64,msbf); 
@@ -1039,16 +969,16 @@ def StatsResQueue : type = record {
   tx_errors  : nat(64,msbf);   
 }
 
-def StatsResQueues : type = record {
+def StatsResQueues : typename = record {
   queues : vector(StatsResQueue);
 }
 
-def BucketCounter : type = record {
+def BucketCounter : typename = record {
   packet_count    : nat(64,msbf); 
   byte_count      : nat(64,msbf);
 }
 
-def StatsResGroup : type = record {
+def StatsResGroup : typename = record {
   length          : nat(16,msbf);
                   : nat(16);
   group_id        : nat(32,msbf);
@@ -1059,7 +989,7 @@ def StatsResGroup : type = record {
   bucket_counters : vector(BucketCounter)  
 }
 
-def StatsResGroupDesc : type = record {
+def StatsResGroupDesc : typename = record {
   length   : nat(16,msbf);
   type     : nat(8);
            : nat(8);
@@ -1067,15 +997,15 @@ def StatsResGroupDesc : type = record {
   buckets  : vector(Bucket);
 }
 
-def GroupFeatureCapabilities : type = enum(nat(32,msbf)) {	
-  0..15,
-  SELECT_WEIGHT   = 1,
-  SELECT_LIVENESS = 2,
-  CHAINING        = 4,
-  CHAINING_CHECKS = 8
+def GroupFeatureCapabilities : typename = enum(nat(32,msbf)) {	
+  0..(1 << 4 - 1),
+  SELECT_WEIGHT   = 1 << 0,
+  SELECT_LIVENESS = 1 << 1,
+  CHAINING        = 1 << 2,
+  CHAINING_CHECKS = 1 << 3
 }
 
-def StatsResGroupFeatures : type = record {
+def StatsResGroupFeatures : typename = record {
   type                : nat(32,msbf);
   capabilities        : GroupFeatureCapabilities;
   max_groups_all      : nat(32,msbf);
@@ -1088,12 +1018,12 @@ def StatsResGroupFeatures : type = record {
   actions_ff          : nat(32,msbf);
 }
 
-def StatsResExperimenter : type = record {
+def StatsResExperimenter : typename = record {
   experimenter_id : nat(32,msbf);
-  data            : vector(nat(8));
+  data            : Data;
 }
 
-def StatsResPayload(t:StatsType):type = variant {
+def StatsResPayload(t:StatsType):typename = variant {
   StatsResDesc          if t == DESC;
   StatsResFlows         if t == FLOW;
   StatsResAggregate     if t == AGGREGATE;
@@ -1103,91 +1033,85 @@ def StatsResPayload(t:StatsType):type = variant {
   StatsResGroup         if t == GROUP;
   StatsResGroupDesc     if t == GROUP_DESC;
   StatsResGroupFeatures if t == GROUP_FEATURES;
-  StatsResExperimenter  if t == EXPERIMENTER;
+  StatsResExperimenter if t == EXPERIMENTER;
 }
 
-def StatsRes : type = record {
+def StatsRes : typename = record {
   type    : StatsType;
   flags   : nat(16,msbf);
-  payload : StatsResPayload;
+  payload : StatsResPayload(type);
 }
 
-def BarrierReq : type = record {}
-def BarrierRes : type = record {}
+def BarrierReq : typename = Empty;
+def BarrierRes : typename = Empty;
 
-def QueueGetConfigReq : type = record {
+def QueueGetConfigReq : typename = record {
   port : PortID;
        : nat(32);
 }
 
-def Property : type = enum(nat(16,msbf)) {	
+def Property : typename = enum(nat(16,msbf)) {	
   MIN_RATE     = 1,
   MAX_RATE     = 2,
-  EXPERIMENTER = 65535
+  EXPERIMENTER = 0xFF
 }
 
-def QueuePropertyMinRate : type = record {
+def QueuePropertyRate : typename = record {
   rate : nat(16,msbf);
        : nat(48,msbf);
 }
 
-def QueuePropertyMaxRate : type = record {
-  rate : nat(16,msbf);
-       : nat(48,msbf);
-}
+def QueuePropertyMinRate : typename = QueuePropertyRate;
+def QueuePropertyMaxRate : typename = QueuePropertyRate;
 
-def QueuePropertyExperimenter : type = record {
+def QueuePropertyExperimenter : typename = record {
   experimenter : nat(32,msbf);
                : nat(32);
   data         : vector(nat(8));
 }
 
-def QueueProperyPayload(t:Property):type = variant {
+def QueueProperyPayload(t:Property):typename = variant {
   QueuePropertyMinRate      if t == MIN_RATE;
   QueuePropertyMaxRate      if t == MAX_RATE;
   QueuePropertyExperimenter if t == EXPERIMENTER;
 }
 
-def QueueProperty : type = record {
+def QueueProperty : typename = record {
   property : Property;
   length   : nat(16,msbf);
            : nat(32,msbf);
-  payload  : QueueProperyPayload;
-  
-  restrict(length - 8, payload);
+  payload  : constrain(length - 8, QueueProperyPayload(property));
 }
 
-def Queue : type = record {
+def Queue : typename = record {
   queue_id   : nat(32,msbf);
   length     : nat(16,msbf);
              : nat(16,msbf);
-  properties : vector(QueueProperty);
-
-  restrict(length - 8, properties);  
+  properties : constrain(length - 8, vector(QueueProperty));
 }
 
-def QueueGetConfigRes : type = record {
+def QueueGetConfigRes : typename = record {
   port   : PortID;
-         : nat(32);
+         : nat(48);
   queues : vector(Queue);	   
 }
 
-def RoleReq : type = record {}
+def RoleReq : type = Empty;
 
-def Role : type = enum(nat(64,msbf)) {	
+def Role : typename = enum(nat(64,msbf)) {	
   NO_CHANGE = 0,
   EQUAL     = 1,
   MASTER    = 2,
   SLAVE     = 3
 }
 
-def RoleRes : type = record {
+def RoleRes : typename = record {
   role          : Role;
                 : nat(32);
   generation_id : nat(64,msbf);  	   
 }
 
-def Payload(t:Type):type = variant {
+def Payload(t:Type):typename = variant {
   Hello             if t == HELLO;
   Error             if t == ERROR;
   EchoReq           if t == ECHO_REQ;
@@ -1214,6 +1138,14 @@ def Payload(t:Type):type = variant {
   QueueGetConfigRes if t == QUEUE_GET_CONFIG_RES;
   RoleReq           if t == ROLE_REQ;
   RoleRes           if t == ROLE_RES;
+}
+
+def Message : typename = record {
+  version : Version;
+  type    : Type;
+  length  : nat(16,msbf);
+  xid     : nat(32,msbf);
+  payload : constrain(length - 8, Payload(type));
 }
 
 } // v1_2 namspace
